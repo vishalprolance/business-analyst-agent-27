@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
@@ -208,11 +209,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
     try {
       const prdContent = generatePRD(analysis, messages);
       const documentBlob = generateWordDocumentBlob(prdContent);
-      downloadDocument(documentBlob, 'Product_Requirements_Document.doc');
+      downloadDocument(documentBlob, 'Master_Plan.doc');
       
       toast({
-        title: "PRD Generated",
-        description: "Your Product Requirements Document has been downloaded.",
+        title: "Master Plan Generated",
+        description: "Your Product Requirements Document / Master Plan has been downloaded.",
       });
     } catch (error) {
       console.error("Error generating PRD:", error);

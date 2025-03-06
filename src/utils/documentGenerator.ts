@@ -129,54 +129,104 @@ export const generatePRD = (analysis: any, messages: any[]) => {
   const coreFeatures = extractCoreFeatures(messages);
   const technicalPreferences = extractTechnicalPreferences(messages);
   const businessModel = extractBusinessModel(messages);
+  const securityConsiderations = extractSecurityConsiderations(messages);
+  const integrations = extractIntegrations(messages);
+  const scalability = extractScalability(messages);
+  const challenges = extractChallenges(messages);
+  const roadmap = extractRoadmap(messages);
+  const futureExpansion = extractFutureExpansion(messages);
   
-  // Format the PRD content
+  // Format the PRD content following the master plan structure
   const prdContent = `
-# Product Requirements Document (PRD)
+# Product Requirements Document (PRD) / Master Plan
 
-## Executive Summary
-${appDescription || "An application designed to solve specific business needs as discussed."}
+## App Overview and Objectives
+${appDescription || "This application aims to solve specific business needs as discussed in our requirement gathering sessions."}
 
-## Business Analysis
-- Revenue: ${analysis.metrics.revenue}
-- Growth Rate: ${analysis.metrics.growth}
-- Customer Base: ${analysis.metrics.customers}
-- Churn Rate: ${analysis.metrics.churn}
-
-## Key Insights
-${analysis.insights.map(insight => `- ${insight}`).join('\n')}
-
-## Target Users
+## Target Audience
 ${targetUsers || "The application targets specific user demographics based on business requirements."}
 
 ## Core Features and Functionality
-${coreFeatures || "Features will be prioritized based on user needs and business objectives."}
+${coreFeatures || "The core functionality of the application includes the essential features required to meet user needs."}
 
-## Technical Specifications
-${technicalPreferences || "Technical stack will be determined based on application requirements and team expertise."}
+## Feature Prioritization (MVP vs. Future Enhancements)
+### MVP Features
+- Essential user authentication and account management
+- Core business logic and primary user flows
+- Basic data storage and retrieval functionality
+- Minimal viable interface for user interaction
 
-## Business Model
+### Future Enhancements
+- Advanced analytics and reporting
+- Enhanced user experience elements
+- Integration with additional third-party services
+- Performance optimizations and scalability improvements
+
+## High-Level Technical Stack Recommendations
+${technicalPreferences || "The recommended technical stack will depend on application requirements, but may include:"}
+- Frontend: React with TypeScript for robust UI development
+- Styling: Tailwind CSS for rapid UI implementation
+- State Management: Context API or Redux depending on complexity
+- Backend: Node.js with Express or Next.js API routes
+- Database: SQL or NoSQL based on data structure requirements
+
+## Conceptual Data Model
+- User data: Profile information, preferences, authentication details
+- Application data: Core business objects and their relationships
+- Transactional data: Records of user actions and system events
+- Configuration data: System settings and parameters
+
+## User Authentication and Security Considerations
+${securityConsiderations || "Security will be implemented with industry best practices, including:"}
+- Secure authentication with email/password or social login options
+- Role-based access control for different user types
+- Data encryption for sensitive information
+- Regular security audits and vulnerability testing
+
+## Potential Third-Party Integrations
+${integrations || "Based on requirements, the following integrations may be considered:"}
+- Payment processing (Stripe, PayPal)
+- Email services (SendGrid, Mailchimp)
+- Analytics (Google Analytics, Mixpanel)
+- Cloud storage (AWS S3, Google Cloud Storage)
+
+## Scalability and Growth Considerations
+${scalability || "The application architecture will be designed with scalability in mind:"}
+- Horizontal scaling for handling increased user load
+- Caching strategies for improved performance
+- Database optimization for larger data volumes
+- CDN implementation for global content delivery
+
+## Business Model and Monetization Strategy
 ${businessModel || "The monetization strategy will align with market demand and user expectations."}
 
-## Development Roadmap
+## Potential Technical Challenges and Solutions
+${challenges || "Anticipated challenges include:"}
+- Real-time data synchronization: Will be addressed using WebSockets or similar technology
+- Mobile responsiveness: Solved with responsive design principles and thorough testing
+- Data migration: Handled through careful planning and incremental implementation
+- Performance optimization: Addressed through code splitting and lazy loading
+
+## Development Roadmap and Milestones
+${roadmap || "The development process will follow these phases:"}
 1. Research and Requirements Gathering (Completed)
-2. Design and Architecture (Next Phase)
-3. MVP Development
-4. Testing and Quality Assurance
-5. Launch and Deployment
-6. Post-Launch Monitoring and Updates
+2. Design and Architecture (2-3 weeks)
+3. MVP Development (4-6 weeks)
+4. Testing and Quality Assurance (2 weeks)
+5. Beta Launch and Feedback Collection (2 weeks)
+6. Refinement and Official Launch (2 weeks)
+7. Post-Launch Monitoring and Updates (Ongoing)
 
-## Recommendations
-Based on the analysis, we recommend focusing on the core functionality first,
-establishing a solid technical foundation, and iteratively adding features
-based on user feedback and business performance metrics.
+## Future Expansion Possibilities
+${futureExpansion || "Future opportunities for expansion include:"}
+- Additional platform support (mobile apps, desktop applications)
+- Geographic expansion to new markets
+- New feature sets based on user feedback and market trends
+- Enhanced AI/ML capabilities for personalization
 
-## Next Steps
-1. Finalize feature prioritization
-2. Create detailed technical specifications
-3. Develop resource allocation plan
-4. Begin implementation of the MVP
+---
 
+We value your feedback on this master plan and are open to revisions based on your input. Please review and let us know if there are any aspects you'd like to adjust or explore further.
 `;
 
   return prdContent;
@@ -188,7 +238,7 @@ const extractAppDescription = (messages: any[]) => {
   for (const message of messages) {
     if (message.sender === 'user') {
       const content = message.content.toLowerCase();
-      if (content.includes('app') && (content.includes('idea') || content.includes('description') || content.includes('about'))) {
+      if (content.includes('app') && (content.includes('idea') || content.includes('description') || content.includes('about') || content.includes('overview') || content.includes('objective'))) {
         return message.content;
       }
     }
@@ -200,7 +250,7 @@ const extractTargetUsers = (messages: any[]) => {
   for (const message of messages) {
     if (message.sender === 'user') {
       const content = message.content.toLowerCase();
-      if (content.includes('user') || content.includes('audience') || content.includes('customer')) {
+      if (content.includes('user') || content.includes('audience') || content.includes('customer') || content.includes('demographic')) {
         return message.content;
       }
     }
@@ -224,7 +274,7 @@ const extractTechnicalPreferences = (messages: any[]) => {
   for (const message of messages) {
     if (message.sender === 'user') {
       const content = message.content.toLowerCase();
-      if (content.includes('tech') || content.includes('framework') || content.includes('language') || content.includes('platform')) {
+      if (content.includes('tech') || content.includes('framework') || content.includes('language') || content.includes('platform') || content.includes('stack')) {
         return message.content;
       }
     }
@@ -236,7 +286,79 @@ const extractBusinessModel = (messages: any[]) => {
   for (const message of messages) {
     if (message.sender === 'user') {
       const content = message.content.toLowerCase();
-      if (content.includes('monetize') || content.includes('revenue') || content.includes('business model') || content.includes('paid')) {
+      if (content.includes('monetize') || content.includes('revenue') || content.includes('business model') || content.includes('paid') || content.includes('subscription')) {
+        return message.content;
+      }
+    }
+  }
+  return null;
+};
+
+const extractSecurityConsiderations = (messages: any[]) => {
+  for (const message of messages) {
+    if (message.sender === 'user') {
+      const content = message.content.toLowerCase();
+      if (content.includes('security') || content.includes('authentication') || content.includes('login') || content.includes('privacy') || content.includes('encrypt')) {
+        return message.content;
+      }
+    }
+  }
+  return null;
+};
+
+const extractIntegrations = (messages: any[]) => {
+  for (const message of messages) {
+    if (message.sender === 'user') {
+      const content = message.content.toLowerCase();
+      if (content.includes('integration') || content.includes('third-party') || content.includes('api') || content.includes('service') || content.includes('connect')) {
+        return message.content;
+      }
+    }
+  }
+  return null;
+};
+
+const extractScalability = (messages: any[]) => {
+  for (const message of messages) {
+    if (message.sender === 'user') {
+      const content = message.content.toLowerCase();
+      if (content.includes('scale') || content.includes('growth') || content.includes('expand') || content.includes('performance') || content.includes('traffic')) {
+        return message.content;
+      }
+    }
+  }
+  return null;
+};
+
+const extractChallenges = (messages: any[]) => {
+  for (const message of messages) {
+    if (message.sender === 'user') {
+      const content = message.content.toLowerCase();
+      if (content.includes('challenge') || content.includes('problem') || content.includes('issue') || content.includes('concern') || content.includes('worry')) {
+        return message.content;
+      }
+    }
+  }
+  return null;
+};
+
+const extractRoadmap = (messages: any[]) => {
+  for (const message of messages) {
+    if (message.sender === 'user') {
+      const content = message.content.toLowerCase();
+      if (content.includes('roadmap') || content.includes('timeline') || content.includes('milestone') || content.includes('schedule') || content.includes('phase')) {
+        return message.content;
+      }
+    }
+  }
+  return null;
+};
+
+const extractFutureExpansion = (messages: any[]) => {
+  for (const message of messages) {
+    if (message.sender === 'user') {
+      const content = message.content.toLowerCase();
+      if (content.includes('future') || content.includes('expansion') || content.includes('next') || content.includes('grow') || content.includes('plan')) {
         return message.content;
       }
     }
@@ -251,11 +373,14 @@ export const generateWordDocumentBlob = (content: string) => {
     <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
     <head>
       <meta charset='utf-8'>
-      <title>Product Requirements Document</title>
+      <title>Product Requirements Document / Master Plan</title>
       <style>
         body { font-family: Calibri, sans-serif; line-height: 1.5; }
         h1 { color: #2563eb; }
         h2 { color: #3b82f6; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; }
+        h3 { color: #4b5563; }
+        ul { margin-bottom: 15px; }
+        li { margin-bottom: 5px; }
       </style>
     </head>
     <body>

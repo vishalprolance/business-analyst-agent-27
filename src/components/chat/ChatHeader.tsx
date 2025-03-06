@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Settings, FileText, BarChart2 } from 'lucide-react';
+import { Settings, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ChatHeaderProps {
@@ -50,7 +50,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           >
             <FileText size={12} />
-            <span>Generate PRD</span>
+            <span>Generate Master Plan</span>
           </motion.button>
         )}
       </div>
