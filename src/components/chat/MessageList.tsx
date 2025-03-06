@@ -20,11 +20,18 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isTyping }) => {
   
   // Auto-scroll to bottom of messages when new messages are added
   useEffect(() => {
-    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages, isTyping]);
 
+  // Function to debug the messages
+  useEffect(() => {
+    console.log("Current messages:", messages);
+  }, [messages]);
+
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10 h-full max-h-[calc(100vh-180px)]">
+    <div className="flex-1 overflow-y-auto p-4 space-y-2 z-10 h-full max-h-[calc(100vh-180px)]">
       {messages && messages.length > 0 ? (
         messages.map((message) => (
           <ChatMessage
@@ -35,12 +42,14 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isTyping }) => {
           />
         ))
       ) : (
-        <div className="text-center text-analyst-text">No messages yet. Start a conversation!</div>
+        <div className="text-center text-analyst-text py-8">
+          No messages yet. Start a conversation!
+        </div>
       )}
       
       {isTyping && <TypingIndicator />}
       
-      <div ref={messageEndRef} />
+      <div ref={messageEndRef} className="h-2" />
     </div>
   );
 };

@@ -52,7 +52,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
   const [openAIService] = useState<OpenAIService>(new OpenAIService(BUSINESS_ANALYST_PROMPT));
   const { toast } = useToast();
   
-  // Reset function to initialize or reset the analysis
   const resetAnalysis = () => {
     const initialAnalysis: AnalysisData = {
       metrics: {
@@ -87,9 +86,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
     onAnalysisComplete(initialAnalysis);
     setIsPRDAvailable(false);
     
-    // Reset messages
+    // Set initial welcome message
     setMessages([{
-      id: '1',
+      id: Date.now().toString(),
       content: "Hi there, I'm your business analyst assistant. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
       sender: 'agent',
       timestamp: new Date()
@@ -97,11 +96,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
     
     // Reset conversation in OpenAI service
     openAIService.resetConversation();
+    
+    console.log("Chat reset with initial message");
   };
   
-  // Initialize analysis and messages on first load
+  // Initialize analysis and messages on first load or reset
   useEffect(() => {
     resetAnalysis();
+    console.log("Chat interface initialized");
   }, [resetTrigger, onAnalysisComplete]);
   
   const handleApiKeySet = (apiKey: string) => {
@@ -114,7 +116,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
     });
   };
 
-  // Check message content against category keywords to mark categories as complete
   const updateCategoriesBasedOnMessage = (message: string) => {
     if (!analysis) return;
     
@@ -162,6 +163,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
       timestamp: new Date()
     };
     
+    console.log("User message:", userMessage);
     setMessages(prev => [...prev, userMessage]);
     
     // Update categories based on user message
@@ -185,6 +187,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
         timestamp: new Date()
       };
       
+      console.log("Agent response:", agentMessage);
       setMessages(prev => [...prev, agentMessage]);
       
       // Update categories based on agent response
