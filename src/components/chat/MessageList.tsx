@@ -19,40 +19,38 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isTyping }) => {
     }
   }, [messages, isTyping]);
 
-  // Debug message rendering
-  useEffect(() => {
-    console.log("MessageList rendering with messages:", messages);
-    if (!Array.isArray(messages)) {
-      console.error("Messages is not an array!", messages);
-    } else if (messages.length === 0) {
-      console.log("Messages array is empty");
-    } else {
-      console.log("First message:", messages[0]);
-      console.log("Last message:", messages[messages.length - 1]);
-      console.log("Total message count:", messages.length);
-    }
-  }, [messages]);
-
-  // Create a safe copy of messages to prevent rendering issues
-  const validMessages = Array.isArray(messages) ? [...messages] : [];
+  // Validate messages array and print diagnostics
+  const safeMessages = Array.isArray(messages) ? messages : [];
   
-  console.log("About to render MessageList with:", validMessages.length, "messages");
+  useEffect(() => {
+    console.log(`MessageList rendering with ${safeMessages.length} messages`);
+    if (safeMessages.length > 0) {
+      console.log("First message:", JSON.stringify(safeMessages[0]));
+      console.log("Last message:", JSON.stringify(safeMessages[safeMessages.length - 1]));
+    }
+  }, [safeMessages]);
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10 h-full max-h-[calc(100vh-180px)] bg-slate-50 bg-opacity-60">
-      {validMessages.length === 0 ? (
+    <div 
+      className="flex-1 overflow-y-auto p-4 space-y-4 z-10 h-full max-h-[calc(100vh-180px)] bg-slate-50 bg-opacity-60"
+      data-testid="message-list-container"
+    >
+      {safeMessages.length === 0 ? (
         <div className="text-center text-analyst-text py-8">
           No messages yet. Start a conversation!
         </div>
       ) : (
-        validMessages.map((message) => (
-          <ChatMessage
-            key={message.id}
-            content={message.content}
-            isUser={message.sender === 'user'}
-            timestamp={message.timestamp}
-          />
-        ))
+        safeMessages.map((message) => {
+          console.log(`Rendering message ID: ${message.id}, Sender: ${message.sender}`);
+          return (
+            <ChatMessage
+              key={message.id}
+              content={message.content}
+              isUser={message.sender === 'user'}
+              timestamp={message.timestamp}
+            />
+          );
+        })
       )}
       
       {isTyping && <TypingIndicator />}

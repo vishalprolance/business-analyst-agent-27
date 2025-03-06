@@ -12,7 +12,7 @@ const ChatMessage: React.FC<MessageProps> = ({ content, isUser, timestamp }) => 
   // Ensure content isn't undefined or null
   const messageContent = content || "";
   
-  console.log("Rendering ChatMessage:", { content: messageContent, isUser, timestamp });
+  console.log("Rendering ChatMessage with content:", messageContent.substring(0, 50) + "...");
   
   return (
     <motion.div
@@ -31,7 +31,7 @@ const ChatMessage: React.FC<MessageProps> = ({ content, isUser, timestamp }) => 
       >
         <div className="text-sm whitespace-pre-wrap break-words">{messageContent}</div>
         <p className="text-xs mt-2 opacity-70">
-          {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          {timestamp instanceof Date ? timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Unknown time'}
         </p>
       </div>
     </motion.div>

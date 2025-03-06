@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
 import { 
@@ -15,6 +14,7 @@ import ChatHeader from '@/components/chat/ChatHeader';
 import MessageList from '@/components/chat/MessageList';
 import ChatInput from '@/components/chat/ChatInput';
 
+// Make this interface available for import by other components
 export interface Message {
   id: string;
   content: string;
@@ -57,9 +57,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
   useEffect(() => {
     console.log("ChatInterface reset triggered", resetTrigger);
     resetAnalysis();
-  }, [resetTrigger, onAnalysisComplete]);
+  }, [resetTrigger]);
   
-  const resetAnalysis = () => {
+  const resetAnalysis = useCallback(() => {
     const initialAnalysis: AnalysisData = {
       metrics: {
         revenue: '$1.2M',
@@ -95,20 +95,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
     
     // Create initial welcome message with unique ID
     const initialMessage: Message = {
-      id: Date.now().toString(),
+      id: `init-${Date.now().toString()}`,
       content: "Hi there, I'm your business analyst assistant. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
       sender: 'agent',
       timestamp: new Date()
     };
     
-    console.log("Setting initial message:", initialMessage);
+    console.log("Setting initial message:", JSON.stringify(initialMessage));
     
-    // Set messages state with the initial message
+    // Set messages state with the initial message - use function form to ensure state updates correctly
     setMessages([initialMessage]);
     
     // Reset conversation in OpenAI service
     openAIService.resetConversation();
-  };
+  }, [onAnalysisComplete, openAIService]);
   
   const handleApiKeySet = (apiKey: string) => {
     openAIService.setApiKey(apiKey);
@@ -159,21 +159,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
   const handleSendMessage = async (input: string) => {
     if (!input.trim()) return;
     
+    console.log("handleSendMessage called with:", input);
+    
     // Add user message with unique ID
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: `user-${Date.now().toString()}`,
       content: input,
       sender: 'user',
       timestamp: new Date()
     };
     
-    console.log("Adding user message:", userMessage);
+    console.log("Adding user message:", JSON.stringify(userMessage));
     
-    setMessages(prevMessages => {
-      const newMessages = [...prevMessages, userMessage];
-      console.log("New messages array after adding user message:", newMessages);
-      return newMessages;
-    });
+    // Important: Use functional update to ensure we're working with the latest state
+    setMessages(prevMessages => [...prevMessages, userMessage]);
     
     // Update categories based on user message
     updateCategoriesBasedOnMessage(input);
@@ -185,27 +184,26 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
       // Get response from OpenAI
       const response = await openAIService.sendMessage(input);
       
-      // Hide typing indicator
-      setIsTyping(false);
-      
-      // Add agent response with unique ID
-      const agentMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: response,
-        sender: 'agent',
-        timestamp: new Date()
-      };
-      
-      console.log("Adding agent response:", agentMessage);
-      
-      setMessages(prevMessages => {
-        const newMessages = [...prevMessages, agentMessage];
-        console.log("New messages array after adding agent message:", newMessages, "length:", newMessages.length);
-        return newMessages;
-      });
-      
-      // Update categories based on agent response
-      updateCategoriesBasedOnMessage(response);
+      // Important: Don't hide typing indicator too soon to ensure state updates properly
+      setTimeout(() => {
+        setIsTyping(false);
+        
+        // Add agent response with unique ID
+        const agentMessage: Message = {
+          id: `agent-${Date.now().toString()}`,
+          content: response,
+          sender: 'agent',
+          timestamp: new Date()
+        };
+        
+        console.log("Adding agent response:", JSON.stringify(agentMessage));
+        
+        // Use functional update to ensure we have the latest messages array
+        setMessages(prevMessages => [...prevMessages, agentMessage]);
+        
+        // Update categories based on agent response
+        updateCategoriesBasedOnMessage(response);
+      }, 500); // Small delay to ensure smooth UI transitions
     } catch (error) {
       console.error("Error getting response:", error);
       setIsTyping(false);
@@ -246,7 +244,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
 
   // Debug output for messages
   useEffect(() => {
-    console.log("ChatInterface current messages:", messages);
+    console.log("ChatInterface current messages:", JSON.stringify(messages));
   }, [messages]);
 
   return (
@@ -255,6 +253,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
       variants={slideUpAnimation}
       initial="initial"
       animate="animate"
+      data-testid="chat-interface"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-white to-analyst-light opacity-50 z-0"></div>
       

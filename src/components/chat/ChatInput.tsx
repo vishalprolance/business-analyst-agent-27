@@ -13,7 +13,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
     const trimmedInput = input.trim();
     if (!trimmedInput) return;
     
-    console.log("Sending message:", trimmedInput);
+    console.log("Sending message from input:", trimmedInput);
     onSendMessage(trimmedInput);
     setInput('');
   };
@@ -27,7 +27,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
 
   return (
     <div className="p-4 border-t border-analyst-border flex items-center space-x-2 z-10 bg-white bg-opacity-90">
-      <button className="p-2 text-analyst-text hover:text-analyst-accent transition-colors">
+      <button 
+        className="p-2 text-analyst-text hover:text-analyst-accent transition-colors"
+        aria-label="Voice input"
+      >
         <Mic size={20} />
       </button>
       
@@ -39,6 +42,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         aria-label="Message input"
+        data-testid="chat-input"
       />
       
       <button 
@@ -50,6 +54,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         onClick={handleSend}
         disabled={!input.trim()}
         aria-label="Send message"
+        data-testid="send-button"
       >
         <Send size={20} />
       </button>
