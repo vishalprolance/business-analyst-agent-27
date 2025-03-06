@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
 import { 
   generatePRD, 
-  generateWordDocumentBlob, 
+  generateWordDocumentBlob,
+  generateMarkdownBlob,
   downloadDocument, 
   BUSINESS_ANALYST_PROMPT 
 } from '@/utils/documentGenerator';
@@ -14,6 +15,7 @@ import ApiKeyInput from '@/components/ApiKeyInput';
 import ChatHeader from '@/components/chat/ChatHeader';
 import MessageList from '@/components/chat/MessageList';
 import ChatInput from '@/components/chat/ChatInput';
+import PRDPreview from '@/components/PRDPreview';
 
 // Make this interface available for import by other components
 export interface Message {
@@ -57,6 +59,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isPRDAvailable, setIsPRDAvailable] = useState(false);
   const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const [openAIService] = useState<OpenAIService>(new OpenAIService(BUSINESS_ANALYST_PROMPT));
+  const [showPRDPreview, setShowPRDPreview] = useState(false);
+  const [prdContent, setPrdContent] = useState('');
   const { toast } = useToast();
   
   // Initialize analysis and messages on first load or reset
@@ -239,22 +243,49 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     if (!analysis) return;
     
     try {
-      const prdContent = generatePRD(analysis, messages);
-      const documentBlob = generateWordDocumentBlob(prdContent);
-      downloadDocument(documentBlob, 'Master_Plan.doc');
-      
-      toast({
-        title: "Master Plan Generated",
-        description: "Your Product Requirements Document / Master Plan has been downloaded.",
-      });
+      // Generate the PRD content
+      const content = generatePRD(analysis, messages);
+      setPrdContent(content);
+      setShowPRDPreview(true);
     } catch (error) {
-      console.error("Error generating PRD:", error);
+      console.error("Error generating PRD preview:", error);
       toast({
         title: "Error",
-        description: "Failed to generate the document. Please try again.",
+        description: "Failed to generate the document preview. Please try again.",
         variant: "destructive",
       });
     }
+  };
+
+  const handlePRDConfirmation = (updatedContent: string) => {
+    try {
+      // Generate and download both files
+      const markdownBlob = generateMarkdownBlob(updatedContent);
+      const wordDocBlob = generateWordDocumentBlob(updatedContent);
+      
+      // Download both files
+      downloadDocument(markdownBlob, 'PRD.md');
+      downloadDocument(wordDocBlob, 'PRD.doc');
+      
+      setShowPRDPreview(false);
+      
+      toast({
+        title: "Documents Generated",
+        description: "Your PRD files have been downloaded in both markdown and Word formats.",
+      });
+    } catch (error) {
+      console.error("Error generating documents:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate the documents. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePRDCancellation = () => {
+    setShowPRDPreview(false);
+    setPrdContent('');
   };
 
   // Calculate completed categories for the header
@@ -298,6 +329,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       <ChatInput onSendMessage={handleSendMessage} />
       
+      {showPRDPreview && (
+        <PRDPreview 
+          content={prdContent} 
+          onConfirm={handlePRDConfirmation} 
+          onCancel={handlePRDCancellation} 
+        />
+      )}
     </motion.div>
   );
 };

@@ -1,4 +1,3 @@
-
 /**
  * Document Generator Utility
  * Handles the creation and download of the Product Requirements Document
@@ -232,6 +231,51 @@ We value your feedback on this master plan and are open to revisions based on yo
   return prdContent;
 };
 
+// Generate a markdown file blob
+export const generateMarkdownBlob = (content: string) => {
+  const blob = new Blob([content], { type: 'text/markdown' });
+  return blob;
+};
+
+// Generate a blob for the Word document
+export const generateWordDocumentBlob = (content: string) => {
+  // Simple conversion to Word-like format (basic HTML that Word can open)
+  const htmlContent = `
+    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head>
+      <meta charset='utf-8'>
+      <title>Product Requirements Document / Master Plan</title>
+      <style>
+        body { font-family: Calibri, sans-serif; line-height: 1.5; }
+        h1 { color: #2563eb; }
+        h2 { color: #3b82f6; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; }
+        h3 { color: #4b5563; }
+        ul { margin-bottom: 15px; }
+        li { margin-bottom: 5px; }
+      </style>
+    </head>
+    <body>
+      ${content.replace(/\n/g, '<br>')}
+    </body>
+    </html>
+  `;
+  
+  const blob = new Blob([htmlContent], { type: 'application/msword' });
+  return blob;
+};
+
+// Helper function to trigger document download
+export const downloadDocument = (blob: Blob, filename: string) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
 // Helper functions to extract information from the conversation
 const extractAppDescription = (messages: any[]) => {
   // Look for messages that might contain app description
@@ -364,43 +408,4 @@ const extractFutureExpansion = (messages: any[]) => {
     }
   }
   return null;
-};
-
-// Generate a blob for the Word document
-export const generateWordDocumentBlob = (content: string) => {
-  // Simple conversion to Word-like format (basic HTML that Word can open)
-  const htmlContent = `
-    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-    <head>
-      <meta charset='utf-8'>
-      <title>Product Requirements Document / Master Plan</title>
-      <style>
-        body { font-family: Calibri, sans-serif; line-height: 1.5; }
-        h1 { color: #2563eb; }
-        h2 { color: #3b82f6; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; }
-        h3 { color: #4b5563; }
-        ul { margin-bottom: 15px; }
-        li { margin-bottom: 5px; }
-      </style>
-    </head>
-    <body>
-      ${content.replace(/\n/g, '<br>')}
-    </body>
-    </html>
-  `;
-  
-  const blob = new Blob([htmlContent], { type: 'application/msword' });
-  return blob;
-};
-
-// Helper function to trigger document download
-export const downloadDocument = (blob: Blob, filename: string) => {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 };
