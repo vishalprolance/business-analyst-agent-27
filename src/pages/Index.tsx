@@ -4,9 +4,11 @@ import { motion } from 'framer-motion';
 import { fadeInAnimation } from '@/utils/animation';
 import Header from '@/components/Header';
 import ChatInterface from '@/components/ChatInterface';
+import ChatHistory from '@/components/chat/ChatHistory';
 import AnalysisDisplay from '@/components/AnalysisDisplay';
 import { BarChart2, BrainCircuit, TrendingUp, Zap, FileText } from 'lucide-react';
 import { Toaster } from "@/components/ui/toaster";
+import { Message } from '@/components/ChatInterface';
 
 interface Analysis {
   metrics: {
@@ -26,6 +28,8 @@ interface Analysis {
 const Index = () => {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [resetTrigger, setResetTrigger] = useState(0);
+  const [showHistory, setShowHistory] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Message[]>([]);
 
   const handleAnalysisComplete = (newAnalysis: Analysis) => {
     setAnalysis(newAnalysis);
@@ -35,17 +39,24 @@ const Index = () => {
     setResetTrigger(prev => prev + 1);
   };
 
-  // Update the Header component to pass the reset handler
-  const HeaderWithReset = () => (
-    <Header onNewAnalysis={handleNewAnalysis} />
-  );
+  const toggleHistory = () => {
+    setShowHistory(prev => !prev);
+  };
+
+  // Handler to receive messages from ChatInterface
+  const handleMessagesUpdate = (messages: Message[]) => {
+    setChatMessages(messages);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-analyst-light">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48Y2lyY2xlIHN0cm9rZT0iI2YwZjJmNSIgc3Ryb2tlLW9wYWNpdHk9Ii41IiBjeD0iMTAiIGN5PSIxMCIgcj0iMSIvPjwvZz48L3N2Zz4=')] opacity-40"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
-        <HeaderWithReset />
+        <Header 
+          onNewAnalysis={handleNewAnalysis} 
+          onHistoryClick={toggleHistory}
+        />
         
         <main className="mt-8">
           <motion.div 
@@ -137,10 +148,18 @@ const Index = () => {
           </motion.div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <ChatInterface 
-              onAnalysisComplete={handleAnalysisComplete} 
-              resetTrigger={resetTrigger}
-            />
+            <div className="relative">
+              <ChatInterface 
+                onAnalysisComplete={handleAnalysisComplete} 
+                resetTrigger={resetTrigger}
+                onMessagesUpdate={handleMessagesUpdate}
+              />
+              <ChatHistory
+                messages={chatMessages}
+                isOpen={showHistory}
+                onClose={toggleHistory}
+              />
+            </div>
             
             <div className="flex flex-col justify-center">
               {analysis ? (

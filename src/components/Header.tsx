@@ -1,13 +1,15 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { History } from 'lucide-react';
 import { fadeInAnimation } from '@/utils/animation';
 
 interface HeaderProps {
   onNewAnalysis?: () => void;
+  onHistoryClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onNewAnalysis }) => {
+const Header: React.FC<HeaderProps> = ({ onNewAnalysis, onHistoryClick }) => {
   return (
     <motion.header 
       className="w-full flex justify-between items-center py-6 px-6 sm:px-8 md:px-12 glass rounded-b-lg border-b border-analyst-border"
@@ -37,7 +39,11 @@ const Header: React.FC<HeaderProps> = ({ onNewAnalysis }) => {
         <button className="text-sm text-analyst-text hover:text-analyst-accent transition-colors duration-300">
           Dashboard
         </button>
-        <button className="text-sm text-analyst-text hover:text-analyst-accent transition-colors duration-300">
+        <button 
+          className="text-sm text-analyst-text hover:text-analyst-accent transition-colors duration-300 flex items-center"
+          onClick={onHistoryClick}
+        >
+          <History size={16} className="mr-1" />
           History
         </button>
         <button 

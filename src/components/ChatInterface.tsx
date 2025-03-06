@@ -1,3 +1,4 @@
+<lov-codelov-code>
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
@@ -42,9 +43,14 @@ interface AnalysisData {
 interface ChatInterfaceProps {
   onAnalysisComplete: (analysis: any) => void;
   resetTrigger?: number;
+  onMessagesUpdate?: (messages: Message[]) => void;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, resetTrigger = 0 }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
+  onAnalysisComplete, 
+  resetTrigger = 0,
+  onMessagesUpdate 
+}) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
@@ -58,6 +64,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
     console.log("ChatInterface reset triggered", resetTrigger);
     resetAnalysis();
   }, [resetTrigger]);
+  
+  // Send messages to parent component whenever they change
+  useEffect(() => {
+    if (onMessagesUpdate && messages.length > 0) {
+      console.log("Sending updated messages to parent", messages.length);
+      onMessagesUpdate(messages);
+    }
+  }, [messages, onMessagesUpdate]);
   
   const resetAnalysis = useCallback(() => {
     const initialAnalysis: AnalysisData = {
@@ -108,7 +122,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
     
     // Reset conversation in OpenAI service
     openAIService.resetConversation();
-  }, [onAnalysisComplete, openAIService]);
+    
+    // Send initial message to parent
+    if (onMessagesUpdate) {
+      onMessagesUpdate([initialMessage]);
+    }
+  }, [onAnalysisComplete, openAIService, onMessagesUpdate]);
   
   const handleApiKeySet = (apiKey: string) => {
     openAIService.setApiKey(apiKey);
@@ -284,3 +303,4 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
 };
 
 export default ChatInterface;
+</lov-code>
