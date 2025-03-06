@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Mic, BarChart3, ChevronRight, FileText, Settings } from 'lucide-react';
@@ -45,14 +46,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
     }]);
   }, []);
   
-  // Auto-scroll to bottom of messages
+  // Auto-scroll to bottom of messages when new messages are added
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, isTyping]);
 
   const handleApiKeySet = (apiKey: string) => {
     openAIService.setApiKey(apiKey);
     setShowApiKeyInput(false);
+    
+    toast({
+      title: "API Key Updated",
+      description: "Your OpenAI API key has been saved successfully",
+    });
   };
 
   const handleSendMessage = async () => {
@@ -191,7 +197,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
         />
       )}
       
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10 scrollbar-chat">
         {messages.map((message) => (
           <motion.div
             key={message.id}
