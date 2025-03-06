@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Mic, BarChart3, ChevronRight, FileText } from 'lucide-react';
@@ -9,6 +10,8 @@ import {
   BUSINESS_ANALYST_PROMPT 
 } from '@/utils/documentGenerator';
 import { useToast } from '@/hooks/use-toast';
+import { OpenAIService } from '@/services/openai';
+import ApiKeyInput from './ApiKeyInput';
 
 interface Message {
   id: string;
@@ -23,51 +26,58 @@ interface ChatInterfaceProps {
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => {
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      content: "Hi there, I'm your professional CTO advisor. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
-      sender: 'agent',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
   const [isPRDAvailable, setIsPRDAvailable] = useState(false);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [openAIService, setOpenAIService] = useState<OpenAIService | null>(null);
+  const [apiKeySet, setApiKeySet] = useState<boolean>(false);
   const messageEndRef = useRef<null | HTMLDivElement>(null);
   const { toast } = useToast();
   
-  // Questions from the refined role-play prompt
-  const questions = [
-    "What problem does your app solve?",
-    "Who are the primary users of your app, and what benefits will they get?",
-    "How do you define success for this app?",
-    "What are the core features of the app?",
-    "Which features are essential for the MVP (Minimum Viable Product)?",
-    "Can you rank your features in order of priority?",
-    "Who is your ideal user (demographics, profession, behavior)?",
-    "Can you describe a typical user journey step by step?",
-    "Will this be a web app, mobile app, desktop app, or a combination?",
-    "Do you have any preferences for frameworks or technologies?",
-    "What kind of data will your app handle?",
-    "How do you plan to store and manage data?",
-    "How will users sign in? (Email/password, Google, LinkedIn, etc.)",
-    "Is this app free, paid, or freemium?",
-    "Does your app need to integrate with other services?",
-    "How many users do you expect initially? What about long-term?",
-    "What is your ideal timeline for development and launch?",
-    "Do you see this app expanding to other markets or industries?",
-    "Do you have any design references or inspiration?"
-  ];
+  // Initialize OpenAI service
+  useEffect(() => {
+    const service = new OpenAIService(BUSINESS_ANALYST_PROMPT);
+    setOpenAIService(service);
+    
+    const savedApiKey = service.getApiKey();
+    if (savedApiKey) {
+      setApiKeySet(true);
+      
+      // Add initial assistant message
+      setMessages([{
+        id: '1',
+        content: "Hi there, I'm your professional CTO advisor. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
+        sender: 'agent',
+        timestamp: new Date()
+      }]);
+    }
+  }, []);
   
   // Auto-scroll to bottom of messages
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleSendMessage = () => {
-    if (!input.trim()) return;
+  const handleApiKeySet = (apiKey: string) => {
+    if (openAIService) {
+      openAIService.setApiKey(apiKey);
+      setApiKeySet(true);
+      
+      // Add initial assistant message if this is the first time setting API key
+      if (messages.length === 0) {
+        setMessages([{
+          id: '1',
+          content: "Hi there, I'm your professional CTO advisor. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
+          sender: 'agent',
+          timestamp: new Date()
+        }]);
+      }
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!input.trim() || !openAIService || !apiKeySet) return;
     
     // Add user message
     const userMessage: Message = {
@@ -80,44 +90,28 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     
-    // Simulate agent typing
+    // Show typing indicator
     setIsTyping(true);
     
-    // Simulate agent response after delay
-    setTimeout(() => {
+    try {
+      // Get response from OpenAI
+      const response = await openAIService.sendMessage(input);
+      
+      // Hide typing indicator
       setIsTyping(false);
       
-      let agentResponse: string;
-      
-      // If we're in the structured question flow and there are more questions
-      if (currentQuestionIndex < questions.length) {
-        agentResponse = questions[currentQuestionIndex];
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-      } else {
-        // Otherwise, provide a contextual response based on the conversation
-        // These are concluding responses for the demo
-        const contextualResponses = [
-          "Thank you for sharing all this valuable information! This gives me a comprehensive understanding of your app vision.",
-          "Based on everything you've shared, I can now help create a detailed Product Requirements Document for your application.",
-          "I've gathered enough information to generate a comprehensive masterplan for your app development process.",
-          "With all these details, I can now compile a complete PRD that will serve as a blueprint for your application.",
-          "Thank you for providing such thorough information about your app idea. I'm ready to generate your Product Requirements Document now."
-        ];
-        
-        agentResponse = contextualResponses[Math.floor(Math.random() * contextualResponses.length)];
-      }
-      
+      // Add agent response
       const agentMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: agentResponse,
+        content: response,
         sender: 'agent',
         timestamp: new Date()
       };
       
       setMessages(prev => [...prev, agentMessage]);
       
-      // After a few messages, simulate analysis completion
-      if (messages.length > 6 || currentQuestionIndex >= Math.floor(questions.length / 2)) {
+      // After a few messages, make PRD available
+      if (messages.length > 6) {
         const sampleAnalysis = {
           metrics: {
             revenue: '$1.2M',
@@ -137,7 +131,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
         onAnalysisComplete(sampleAnalysis);
         setIsPRDAvailable(true);
       }
-    }, 1500);
+    } catch (error) {
+      console.error("Error getting response:", error);
+      setIsTyping(false);
+      
+      toast({
+        title: "Error",
+        description: "Failed to get a response. Please check your API key and try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleGeneratePRD = () => {
@@ -172,11 +175,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
       <div className="absolute inset-0 bg-gradient-to-br from-white to-analyst-light opacity-50 z-0"></div>
       
       <div className="flex items-center justify-between p-4 border-b border-analyst-border z-10">
-        <h2 className="font-medium">Business Analyst</h2>
+        <h2 className="font-medium">CTO Advisor</h2>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-            <span className="text-sm text-analyst-text">Online</span>
+            <span className={`w-2 h-2 ${apiKeySet ? 'bg-green-500' : 'bg-yellow-500'} rounded-full`}></span>
+            <span className="text-sm text-analyst-text">{apiKeySet ? 'Online' : 'Waiting for API Key'}</span>
           </div>
           
           {isPRDAvailable && (
@@ -193,6 +196,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
           )}
         </div>
       </div>
+      
+      {!apiKeySet && (
+        <ApiKeyInput 
+          onApiKeySet={handleApiKeySet} 
+          initialValue={openAIService?.getApiKey() || undefined} 
+        />
+      )}
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10">
         {messages.map((message) => (
@@ -245,20 +255,21 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
         <input
           type="text"
           className="flex-1 p-2 px-4 rounded-full border border-analyst-border bg-white focus:ring-2 focus:ring-analyst-accent focus:border-transparent transition-all"
-          placeholder="Tell me about your app idea..."
+          placeholder={apiKeySet ? "Tell me about your app idea..." : "Please set your OpenAI API key first..."}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+          disabled={!apiKeySet}
         />
         
         <button 
           className={`p-2 rounded-full ${
-            input.trim() 
+            input.trim() && apiKeySet
               ? 'bg-analyst-accent text-white hover:bg-blue-600' 
               : 'bg-gray-100 text-gray-400'
           } transition-colors`}
           onClick={handleSendMessage}
-          disabled={!input.trim()}
+          disabled={!input.trim() || !apiKeySet}
         >
           <Send size={20} />
         </button>
