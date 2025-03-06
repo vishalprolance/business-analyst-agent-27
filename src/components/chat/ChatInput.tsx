@@ -10,9 +10,19 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const [input, setInput] = useState('');
 
   const handleSend = () => {
-    if (!input.trim()) return;
-    onSendMessage(input);
+    const trimmedInput = input.trim();
+    if (!trimmedInput) return;
+    
+    console.log("Sending message:", trimmedInput);
+    onSendMessage(trimmedInput);
     setInput('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
   };
 
   return (
@@ -27,7 +37,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         placeholder="Tell me about your app idea..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+        onKeyDown={handleKeyDown}
+        aria-label="Message input"
       />
       
       <button 
@@ -38,6 +49,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         } transition-colors`}
         onClick={handleSend}
         disabled={!input.trim()}
+        aria-label="Send message"
       >
         <Send size={20} />
       </button>
