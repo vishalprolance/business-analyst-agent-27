@@ -16,7 +16,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   };
 
   return (
-    <div className="p-4 border-t border-analyst-border flex items-center space-x-2 z-10">
+    <div className="p-4 border-t border-analyst-border flex items-center space-x-2 z-10 bg-white bg-opacity-90">
       <button className="p-2 text-analyst-text hover:text-analyst-accent transition-colors">
         <Mic size={20} />
       </button>

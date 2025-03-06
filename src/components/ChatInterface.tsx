@@ -86,18 +86,21 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
     onAnalysisComplete(initialAnalysis);
     setIsPRDAvailable(false);
     
-    // Set initial welcome message
-    setMessages([{
+    // Create initial welcome message with unique ID
+    const initialMessage: Message = {
       id: Date.now().toString(),
       content: "Hi there, I'm your business analyst assistant. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
       sender: 'agent',
       timestamp: new Date()
-    }]);
+    };
+    
+    // Set messages state with the initial message
+    setMessages([initialMessage]);
     
     // Reset conversation in OpenAI service
     openAIService.resetConversation();
     
-    console.log("Chat reset with initial message");
+    console.log("Chat reset with initial message:", initialMessage);
   };
   
   // Initialize analysis and messages on first load or reset
@@ -155,7 +158,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
   const handleSendMessage = async (input: string) => {
     if (!input.trim()) return;
     
-    // Add user message
+    // Add user message with unique ID
     const userMessage: Message = {
       id: Date.now().toString(),
       content: input,
@@ -164,7 +167,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
     };
     
     console.log("User message:", userMessage);
-    setMessages(prev => [...prev, userMessage]);
+    
+    // Update messages with the new user message
+    setMessages(prevMessages => {
+      const updatedMessages = [...prevMessages, userMessage];
+      console.log("Updated messages after adding user message:", updatedMessages);
+      return updatedMessages;
+    });
     
     // Update categories based on user message
     updateCategoriesBasedOnMessage(input);
@@ -179,7 +188,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
       // Hide typing indicator
       setIsTyping(false);
       
-      // Add agent response
+      // Add agent response with unique ID
       const agentMessage: Message = {
         id: (Date.now() + 1).toString(),
         content: response,
@@ -188,7 +197,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
       };
       
       console.log("Agent response:", agentMessage);
-      setMessages(prev => [...prev, agentMessage]);
+      
+      // Update messages with the new agent message
+      setMessages(prevMessages => {
+        const updatedMessages = [...prevMessages, agentMessage];
+        console.log("Updated messages after adding agent message:", updatedMessages);
+        return updatedMessages;
+      });
       
       // Update categories based on agent response
       updateCategoriesBasedOnMessage(response);
