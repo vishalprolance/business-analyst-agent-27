@@ -35,6 +35,12 @@ export const blurAnimation = {
   transition: { duration: 0.6, ease: [0.23, 1, 0.32, 1] }
 };
 
+export const popAnimation = {
+  initial: { opacity: 0, scale: 0.9 },
+  animate: { opacity: 1, scale: 1 },
+  transition: { type: 'spring', stiffness: 300, damping: 20 }
+};
+
 // For sequencing animations when needed
 export const getDelayedAnimation = (delay: number, animation: any) => ({
   ...animation,

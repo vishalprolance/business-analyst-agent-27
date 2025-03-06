@@ -5,7 +5,8 @@ import { fadeInAnimation } from '@/utils/animation';
 import Header from '@/components/Header';
 import ChatInterface from '@/components/ChatInterface';
 import AnalysisDisplay from '@/components/AnalysisDisplay';
-import { BarChart2, BrainCircuit, TrendingUp, Zap } from 'lucide-react';
+import { BarChart2, BrainCircuit, TrendingUp, Zap, FileText } from 'lucide-react';
+import { Toaster } from "@/components/ui/toaster";
 
 interface Analysis {
   metrics: {
@@ -53,12 +54,12 @@ const Index = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               Ask questions about your business data and get instant insights, 
-              visualizations, and actionable recommendations.
+              visualizations, and actionable recommendations in a downloadable Product Requirements Document.
             </motion.p>
           </motion.div>
           
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+            className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -104,6 +105,20 @@ const Index = () => {
                 <p className="text-xs text-analyst-text mt-1">Actionable recommendations</p>
               </div>
             </motion.div>
+            
+            <motion.div 
+              className="flex items-center bg-white p-5 rounded-lg border border-analyst-border"
+              whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
+              transition={{ duration: 0.3, delay: 0.15 }}
+            >
+              <div className="p-3 bg-amber-50 rounded-xl mr-4">
+                <FileText className="w-6 h-6 text-amber-600" />
+              </div>
+              <div>
+                <h3 className="font-medium text-sm">PRD Generation</h3>
+                <p className="text-xs text-analyst-text mt-1">Download requirement docs</p>
+              </div>
+            </motion.div>
           </motion.div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -125,7 +140,7 @@ const Index = () => {
                   <h3 className="text-lg font-medium mb-2">Start a conversation</h3>
                   <p className="text-analyst-text text-sm max-w-md mx-auto">
                     Ask the AI assistant about your business metrics, KPIs, or market trends. 
-                    Analysis results will appear here.
+                    Analysis results will appear here, and you can generate a Product Requirements Document.
                   </p>
                 </motion.div>
               )}
@@ -142,6 +157,7 @@ const Index = () => {
           </motion.div>
         </main>
       </div>
+      <Toaster />
     </div>
   );
 };

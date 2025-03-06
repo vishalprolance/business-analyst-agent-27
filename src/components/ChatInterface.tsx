@@ -1,8 +1,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Mic, BarChart3, ChevronRight } from 'lucide-react';
+import { Send, Mic, BarChart3, ChevronRight, FileText } from 'lucide-react';
 import { slideUpAnimation } from '@/utils/animation';
+import { generatePRD, generateWordDocumentBlob, downloadDocument } from '@/utils/documentGenerator';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   id: string;
@@ -20,21 +22,24 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "I'm your business analyst assistant. How can I help you today?",
+      content: "I'm your business analyst assistant. How can I help you today? I can analyze your business data and generate a Product Requirements Document based on our discussion.",
       sender: 'agent',
       timestamp: new Date()
     }
   ]);
   const [isTyping, setIsTyping] = useState(false);
+  const [analysis, setAnalysis] = useState<any>(null);
+  const [isPRDAvailable, setIsPRDAvailable] = useState(false);
   const messageEndRef = useRef<null | HTMLDivElement>(null);
+  const { toast } = useToast();
   
   // Sample responses for demo purposes
   const sampleResponses = [
-    "I'll analyze that for you. Let me break down the key metrics from your sales data.",
-    "Based on your current growth rate of 15% quarter-over-quarter, I project you'll reach your annual target by October.",
-    "I've identified three areas for improvement in your customer acquisition funnel: landing page conversion, email response rates, and trial-to-paid conversion.",
-    "Your customer lifetime value has increased by 22% since implementing the new retention strategy.",
-    "Looking at your market positioning, I recommend focusing on the enterprise segment where your profit margins are 3x higher than SMB customers."
+    "I'll analyze that for you. Let me break down the key metrics from your sales data. This will help us create a comprehensive Product Requirements Document.",
+    "Based on your current growth rate of 15% quarter-over-quarter, I project you'll reach your annual target by October. We should include this trajectory in the PRD.",
+    "I've identified three areas for improvement in your customer acquisition funnel: landing page conversion, email response rates, and trial-to-paid conversion. These will be key requirements in our document.",
+    "Your customer lifetime value has increased by 22% since implementing the new retention strategy. This is an important metric to highlight in our requirements analysis.",
+    "Looking at your market positioning, I recommend focusing on the enterprise segment where your profit margins are 3x higher than SMB customers. I'll add this to our PRD recommendations."
   ];
 
   // Auto-scroll to bottom of messages
@@ -76,7 +81,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
       setMessages(prev => [...prev, agentMessage]);
       
       // Simulate analysis completion after response
-      if (Math.random() > 0.5) {
+      if (messages.length > 2 || Math.random() > 0.3) {
         const sampleAnalysis = {
           metrics: {
             revenue: '$1.2M',
@@ -87,13 +92,38 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
           insights: [
             'Revenue is growing consistently at 15% QoQ',
             'Customer acquisition cost has decreased by 12%',
-            'Enterprise segment shows 3x higher profit margins'
+            'Enterprise segment shows 3x higher profit margins',
+            'Mobile engagement is 34% higher than desktop'
           ]
         };
         
+        setAnalysis(sampleAnalysis);
         onAnalysisComplete(sampleAnalysis);
+        setIsPRDAvailable(true);
       }
     }, 1500);
+  };
+
+  const handleGeneratePRD = () => {
+    if (!analysis) return;
+    
+    try {
+      const prdContent = generatePRD(analysis, messages);
+      const documentBlob = generateWordDocumentBlob(prdContent);
+      downloadDocument(documentBlob, 'Product_Requirements_Document.doc');
+      
+      toast({
+        title: "PRD Generated",
+        description: "Your Product Requirements Document has been downloaded.",
+      });
+    } catch (error) {
+      console.error("Error generating PRD:", error);
+      toast({
+        title: "Error",
+        description: "Failed to generate the document. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -107,9 +137,24 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
       
       <div className="flex items-center justify-between p-4 border-b border-analyst-border z-10">
         <h2 className="font-medium">Business Analyst</h2>
-        <div className="flex items-center space-x-2">
-          <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-          <span className="text-sm text-analyst-text">Online</span>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+            <span className="text-sm text-analyst-text">Online</span>
+          </div>
+          
+          {isPRDAvailable && (
+            <motion.button 
+              className="flex items-center space-x-1 text-xs px-3 py-1 bg-analyst-accent text-white rounded-full hover:bg-blue-600 transition-colors"
+              onClick={handleGeneratePRD}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            >
+              <FileText size={12} />
+              <span>Generate PRD</span>
+            </motion.button>
+          )}
         </div>
       </div>
       
