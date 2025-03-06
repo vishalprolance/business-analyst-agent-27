@@ -19,7 +19,7 @@ const Header = () => {
       >
         <div className="relative w-8 h-8 sm:w-10 sm:h-10 mr-3 bg-gradient-to-br from-analyst-accent to-blue-500 rounded-lg"></div>
         <div className="flex flex-col">
-          <h1 className="text-lg sm:text-xl font-semibold tracking-tight">AnalystOwl</h1>
+          <h1 className="text-lg sm:text-xl font-semibold tracking-tight">Business Analyst Agent</h1>
           <p className="text-xs text-analyst-text">Business Intelligence Agent</p>
         </div>
       </motion.div>

@@ -45,7 +45,7 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              CTO Advisor & PRD Generator
+              Business Analyst Agent & PRD Generator
             </motion.h1>
             <motion.p 
               className="text-analyst-text max-w-2xl mx-auto"
@@ -53,7 +53,7 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              Chat with your friendly CTO assistant to plan your app idea and generate 
+              Chat with your friendly business analyst assistant to plan your app idea and generate 
               a comprehensive Product Requirements Document with insights and recommendations.
             </motion.p>
           </motion.div>
@@ -139,7 +139,7 @@ const Index = () => {
                   </div>
                   <h3 className="text-lg font-medium mb-2">Start a conversation</h3>
                   <p className="text-analyst-text text-sm max-w-md mx-auto">
-                    Tell your CTO advisor about your app idea. Share your vision and requirements
+                    Tell your business analyst about your app idea. Share your vision and requirements
                     to generate a comprehensive Product Requirements Document with actionable insights.
                   </p>
                 </motion.div>

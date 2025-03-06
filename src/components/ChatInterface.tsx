@@ -47,7 +47,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
       // Add initial assistant message
       setMessages([{
         id: '1',
-        content: "Hi there, I'm your professional CTO advisor. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
+        content: "Hi there, I'm your business analyst assistant. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
         sender: 'agent',
         timestamp: new Date()
       }]);
@@ -68,7 +68,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
       if (messages.length === 0) {
         setMessages([{
           id: '1',
-          content: "Hi there, I'm your professional CTO advisor. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
+          content: "Hi there, I'm your business analyst assistant. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
           sender: 'agent',
           timestamp: new Date()
         }]);
@@ -175,7 +175,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
       <div className="absolute inset-0 bg-gradient-to-br from-white to-analyst-light opacity-50 z-0"></div>
       
       <div className="flex items-center justify-between p-4 border-b border-analyst-border z-10">
-        <h2 className="font-medium">CTO Advisor</h2>
+        <h2 className="font-medium">Business Analyst Agent</h2>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <span className={`w-2 h-2 ${apiKeySet ? 'bg-green-500' : 'bg-yellow-500'} rounded-full`}></span>
