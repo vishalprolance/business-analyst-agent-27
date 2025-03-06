@@ -32,7 +32,8 @@ interface OpenAICompletionResponse {
 }
 
 export class OpenAIService {
-  private apiKey: string | null = null;
+  // Hardcoded API key - Replace with your actual API key
+  private apiKey: string = "sk-yourapikeygoeshere";
   private systemPrompt: string;
   private conversation: OpenAIMessage[] = [];
   private model: string = "gpt-4o";
@@ -44,13 +45,9 @@ export class OpenAIService {
 
   public setApiKey(key: string) {
     this.apiKey = key;
-    localStorage.setItem('openai_api_key', key);
   }
 
-  public getApiKey(): string | null {
-    if (!this.apiKey) {
-      this.apiKey = localStorage.getItem('openai_api_key');
-    }
+  public getApiKey(): string {
     return this.apiKey;
   }
 
@@ -64,10 +61,6 @@ export class OpenAIService {
   }
 
   public async sendMessage(userMessage: string): Promise<string> {
-    if (!this.apiKey) {
-      throw new Error("API key not set");
-    }
-
     // Add user message to conversation
     this.conversation.push({
       role: 'user',

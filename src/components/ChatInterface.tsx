@@ -11,7 +11,6 @@ import {
 } from '@/utils/documentGenerator';
 import { useToast } from '@/hooks/use-toast';
 import { OpenAIService } from '@/services/openai';
-import ApiKeyInput from './ApiKeyInput';
 
 interface Message {
   id: string;
@@ -30,28 +29,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
   const [isTyping, setIsTyping] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
   const [isPRDAvailable, setIsPRDAvailable] = useState(false);
-  const [openAIService, setOpenAIService] = useState<OpenAIService | null>(null);
-  const [apiKeySet, setApiKeySet] = useState<boolean>(false);
+  const [openAIService] = useState<OpenAIService>(new OpenAIService(BUSINESS_ANALYST_PROMPT));
   const messageEndRef = useRef<null | HTMLDivElement>(null);
   const { toast } = useToast();
   
-  // Initialize OpenAI service
+  // Initialize chat with welcome message
   useEffect(() => {
-    const service = new OpenAIService(BUSINESS_ANALYST_PROMPT);
-    setOpenAIService(service);
-    
-    const savedApiKey = service.getApiKey();
-    if (savedApiKey) {
-      setApiKeySet(true);
-      
-      // Add initial assistant message
-      setMessages([{
-        id: '1',
-        content: "Hi there, I'm your business analyst assistant. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
-        sender: 'agent',
-        timestamp: new Date()
-      }]);
-    }
+    // Add initial assistant message
+    setMessages([{
+      id: '1',
+      content: "Hi there, I'm your business analyst assistant. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
+      sender: 'agent',
+      timestamp: new Date()
+    }]);
   }, []);
   
   // Auto-scroll to bottom of messages
@@ -59,25 +49,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleApiKeySet = (apiKey: string) => {
-    if (openAIService) {
-      openAIService.setApiKey(apiKey);
-      setApiKeySet(true);
-      
-      // Add initial assistant message if this is the first time setting API key
-      if (messages.length === 0) {
-        setMessages([{
-          id: '1',
-          content: "Hi there, I'm your business analyst assistant. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
-          sender: 'agent',
-          timestamp: new Date()
-        }]);
-      }
-    }
-  };
-
   const handleSendMessage = async () => {
-    if (!input.trim() || !openAIService || !apiKeySet) return;
+    if (!input.trim()) return;
     
     // Add user message
     const userMessage: Message = {
@@ -137,7 +110,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
       
       toast({
         title: "Error",
-        description: "Failed to get a response. Please check your API key and try again.",
+        description: "Failed to get a response. Please check your connection and try again.",
         variant: "destructive",
       });
     }
@@ -178,8 +151,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
         <h2 className="font-medium">Business Analyst Agent</h2>
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <span className={`w-2 h-2 ${apiKeySet ? 'bg-green-500' : 'bg-yellow-500'} rounded-full`}></span>
-            <span className="text-sm text-analyst-text">{apiKeySet ? 'Online' : 'Waiting for API Key'}</span>
+            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+            <span className="text-sm text-analyst-text">Online</span>
           </div>
           
           {isPRDAvailable && (
@@ -196,13 +169,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
           )}
         </div>
       </div>
-      
-      {!apiKeySet && (
-        <ApiKeyInput 
-          onApiKeySet={handleApiKeySet} 
-          initialValue={openAIService?.getApiKey() || undefined} 
-        />
-      )}
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10">
         {messages.map((message) => (
@@ -255,21 +221,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
         <input
           type="text"
           className="flex-1 p-2 px-4 rounded-full border border-analyst-border bg-white focus:ring-2 focus:ring-analyst-accent focus:border-transparent transition-all"
-          placeholder={apiKeySet ? "Tell me about your app idea..." : "Please set your OpenAI API key first..."}
+          placeholder="Tell me about your app idea..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-          disabled={!apiKeySet}
         />
         
         <button 
           className={`p-2 rounded-full ${
-            input.trim() && apiKeySet
+            input.trim()
               ? 'bg-analyst-accent text-white hover:bg-blue-600' 
               : 'bg-gray-100 text-gray-400'
           } transition-colors`}
           onClick={handleSendMessage}
-          disabled={!input.trim() || !apiKeySet}
+          disabled={!input.trim()}
         >
           <Send size={20} />
         </button>
