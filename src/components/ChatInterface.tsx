@@ -23,6 +23,23 @@ interface Message {
   timestamp: Date;
 }
 
+interface Category {
+  name: string;
+  isComplete: boolean;
+  keywords: string[];
+}
+
+interface AnalysisData {
+  metrics: {
+    revenue: string;
+    growth: string;
+    customers: string;
+    churn: string;
+  };
+  insights: string[];
+  categories: Category[];
+}
+
 interface ChatInterfaceProps {
   onAnalysisComplete: (analysis: any) => void;
 }
@@ -30,11 +47,46 @@ interface ChatInterfaceProps {
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [analysis, setAnalysis] = useState<any>(null);
+  const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const [isPRDAvailable, setIsPRDAvailable] = useState(false);
   const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const [openAIService] = useState<OpenAIService>(new OpenAIService(BUSINESS_ANALYST_PROMPT));
   const { toast } = useToast();
+  
+  // Initialize analysis with categories
+  useEffect(() => {
+    const initialAnalysis: AnalysisData = {
+      metrics: {
+        revenue: '$1.2M',
+        growth: '+15%',
+        customers: '1,250',
+        churn: '2.3%'
+      },
+      insights: [
+        'Revenue is growing consistently at 15% QoQ',
+        'Customer acquisition cost has decreased by 12%',
+        'Enterprise segment shows 3x higher profit margins',
+        'Mobile engagement is 34% higher than desktop'
+      ],
+      categories: [
+        { name: "Core Concept & Goals", isComplete: true, keywords: ["goal", "concept", "purpose", "objective"] },
+        { name: "Features & Prioritization", isComplete: true, keywords: ["feature", "prioritize", "priority", "important"] },
+        { name: "Target Audience & User Flow", isComplete: true, keywords: ["audience", "user", "flow", "customer"] },
+        { name: "Platform & Technology", isComplete: false, keywords: ["platform", "technology", "tech stack", "framework"] },
+        { name: "Data & Storage", isComplete: false, keywords: ["data", "storage", "database", "information"] },
+        { name: "User Authentication & Security", isComplete: false, keywords: ["authentication", "security", "login", "password"] },
+        { name: "Business Model & Monetization", isComplete: false, keywords: ["business model", "monetization", "revenue", "pricing"] },
+        { name: "Integrations & Third-Party Services", isComplete: false, keywords: ["integration", "third-party", "service", "api"] },
+        { name: "Scalability & Growth", isComplete: false, keywords: ["scalability", "growth", "scale", "expand"] },
+        { name: "Constraints & Development Timeline", isComplete: false, keywords: ["constraint", "timeline", "deadline", "development time"] },
+        { name: "Future Expansion & Roadmap", isComplete: false, keywords: ["future", "expansion", "roadmap", "vision"] },
+        { name: "User Interface & Experience (UI/UX)", isComplete: false, keywords: ["interface", "ui", "ux", "experience", "design"] }
+      ]
+    };
+    
+    setAnalysis(initialAnalysis);
+    onAnalysisComplete(initialAnalysis);
+  }, [onAnalysisComplete]);
   
   // Initialize chat with welcome message
   useEffect(() => {
@@ -57,6 +109,43 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
     });
   };
 
+  // Check message content against category keywords to mark categories as complete
+  const updateCategoriesBasedOnMessage = (message: string) => {
+    if (!analysis) return;
+    
+    const updatedCategories = [...analysis.categories];
+    let categoriesUpdated = false;
+    
+    updatedCategories.forEach(category => {
+      if (!category.isComplete) {
+        const foundKeyword = category.keywords.some(keyword => 
+          message.toLowerCase().includes(keyword.toLowerCase())
+        );
+        
+        if (foundKeyword) {
+          category.isComplete = true;
+          categoriesUpdated = true;
+        }
+      }
+    });
+    
+    if (categoriesUpdated) {
+      const updatedAnalysis = {
+        ...analysis,
+        categories: updatedCategories
+      };
+      
+      setAnalysis(updatedAnalysis);
+      onAnalysisComplete(updatedAnalysis);
+      
+      // After 4 categories are complete, make PRD available
+      const completedCount = updatedCategories.filter(cat => cat.isComplete).length;
+      if (completedCount >= 4 && !isPRDAvailable) {
+        setIsPRDAvailable(true);
+      }
+    }
+  };
+
   const handleSendMessage = async (input: string) => {
     if (!input.trim()) return;
     
@@ -69,6 +158,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
     };
     
     setMessages(prev => [...prev, userMessage]);
+    
+    // Update categories based on user message
+    updateCategoriesBasedOnMessage(input);
     
     // Show typing indicator
     setIsTyping(true);
@@ -90,27 +182,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
       
       setMessages(prev => [...prev, agentMessage]);
       
-      // After a few messages, make PRD available
-      if (messages.length > 6) {
-        const sampleAnalysis = {
-          metrics: {
-            revenue: '$1.2M',
-            growth: '+15%',
-            customers: '1,250',
-            churn: '2.3%'
-          },
-          insights: [
-            'Revenue is growing consistently at 15% QoQ',
-            'Customer acquisition cost has decreased by 12%',
-            'Enterprise segment shows 3x higher profit margins',
-            'Mobile engagement is 34% higher than desktop'
-          ]
-        };
-        
-        setAnalysis(sampleAnalysis);
-        onAnalysisComplete(sampleAnalysis);
-        setIsPRDAvailable(true);
-      }
+      // Update categories based on agent response
+      updateCategoriesBasedOnMessage(response);
     } catch (error) {
       console.error("Error getting response:", error);
       setIsTyping(false);

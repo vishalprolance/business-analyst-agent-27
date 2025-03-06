@@ -78,7 +78,7 @@ const AnalysisDisplay: React.FC<AnalysisDisplayProps> = ({ analysis }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          Project Analysis Progress
+          Requirement Analysis Progress
         </motion.h2>
         <motion.p 
           className="text-sm text-analyst-text mb-4"
