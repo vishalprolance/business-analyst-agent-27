@@ -13,6 +13,11 @@ interface AnalysisDisplayProps {
       churn: string;
     };
     insights: string[];
+    categories?: {
+      name: string;
+      isComplete: boolean;
+      keywords: string[];
+    }[];
   } | null;
 }
 
@@ -43,20 +48,20 @@ const ProgressItem = ({
 };
 
 const AnalysisDisplay: React.FC<AnalysisDisplayProps> = ({ analysis }) => {
-  // These would eventually be dynamically updated based on actual conversation progress
-  const categories = [
-    { name: "Core Concept & Goals", isComplete: true },
-    { name: "Features & Prioritization", isComplete: true },
-    { name: "Target Audience & User Flow", isComplete: true },
-    { name: "Platform & Technology", isComplete: false },
-    { name: "Data & Storage", isComplete: false },
-    { name: "User Authentication & Security", isComplete: false },
-    { name: "Business Model & Monetization", isComplete: false },
-    { name: "Integrations & Third-Party Services", isComplete: false },
-    { name: "Scalability & Growth", isComplete: false },
-    { name: "Constraints & Development Timeline", isComplete: false },
-    { name: "Future Expansion & Roadmap", isComplete: false },
-    { name: "User Interface & Experience (UI/UX)", isComplete: false }
+  // Define default categories if none exist in the analysis
+  const categories = analysis?.categories || [
+    { name: "Core Concept & Goals", isComplete: false, keywords: ["goal", "concept", "purpose", "objective"] },
+    { name: "Features & Prioritization", isComplete: false, keywords: ["feature", "prioritize", "priority", "important"] },
+    { name: "Target Audience & User Flow", isComplete: false, keywords: ["audience", "user", "flow", "customer"] },
+    { name: "Platform & Technology", isComplete: false, keywords: ["platform", "technology", "tech stack", "framework"] },
+    { name: "Data & Storage", isComplete: false, keywords: ["data", "storage", "database", "information"] },
+    { name: "User Authentication & Security", isComplete: false, keywords: ["authentication", "security", "login", "password"] },
+    { name: "Business Model & Monetization", isComplete: false, keywords: ["business model", "monetization", "revenue", "pricing"] },
+    { name: "Integrations & Third-Party Services", isComplete: false, keywords: ["integration", "third-party", "service", "api"] },
+    { name: "Scalability & Growth", isComplete: false, keywords: ["scalability", "growth", "scale", "expand"] },
+    { name: "Constraints & Development Timeline", isComplete: false, keywords: ["constraint", "timeline", "deadline", "development time"] },
+    { name: "Future Expansion & Roadmap", isComplete: false, keywords: ["future", "expansion", "roadmap", "vision"] },
+    { name: "User Interface & Experience (UI/UX)", isComplete: false, keywords: ["interface", "ui", "ux", "experience", "design"] }
   ];
   
   // Calculate completion percentage

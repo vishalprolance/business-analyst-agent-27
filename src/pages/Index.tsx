@@ -16,21 +16,36 @@ interface Analysis {
     churn: string;
   };
   insights: string[];
+  categories?: {
+    name: string;
+    isComplete: boolean;
+    keywords: string[];
+  }[];
 }
 
 const Index = () => {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [resetTrigger, setResetTrigger] = useState(0);
 
   const handleAnalysisComplete = (newAnalysis: Analysis) => {
     setAnalysis(newAnalysis);
   };
+
+  const handleNewAnalysis = () => {
+    setResetTrigger(prev => prev + 1);
+  };
+
+  // Update the Header component to pass the reset handler
+  const HeaderWithReset = () => (
+    <Header onNewAnalysis={handleNewAnalysis} />
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-analyst-light">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48Y2lyY2xlIHN0cm9rZT0iI2YwZjJmNSIgc3Ryb2tlLW9wYWNpdHk9Ii41IiBjeD0iMTAiIGN5PSIxMCIgcj0iMSIvPjwvZz48L3N2Zz4=')] opacity-40"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
-        <Header />
+        <HeaderWithReset />
         
         <main className="mt-8">
           <motion.div 
@@ -122,7 +137,10 @@ const Index = () => {
           </motion.div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <ChatInterface onAnalysisComplete={handleAnalysisComplete} />
+            <ChatInterface 
+              onAnalysisComplete={handleAnalysisComplete} 
+              resetTrigger={resetTrigger}
+            />
             
             <div className="flex flex-col justify-center">
               {analysis ? (

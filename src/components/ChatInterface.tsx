@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
@@ -42,9 +41,10 @@ interface AnalysisData {
 
 interface ChatInterfaceProps {
   onAnalysisComplete: (analysis: any) => void;
+  resetTrigger?: number;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, resetTrigger = 0 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
@@ -53,8 +53,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
   const [openAIService] = useState<OpenAIService>(new OpenAIService(BUSINESS_ANALYST_PROMPT));
   const { toast } = useToast();
   
-  // Initialize analysis with categories
-  useEffect(() => {
+  // Reset function to initialize or reset the analysis
+  const resetAnalysis = () => {
     const initialAnalysis: AnalysisData = {
       metrics: {
         revenue: '$1.2M',
@@ -69,9 +69,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
         'Mobile engagement is 34% higher than desktop'
       ],
       categories: [
-        { name: "Core Concept & Goals", isComplete: true, keywords: ["goal", "concept", "purpose", "objective"] },
-        { name: "Features & Prioritization", isComplete: true, keywords: ["feature", "prioritize", "priority", "important"] },
-        { name: "Target Audience & User Flow", isComplete: true, keywords: ["audience", "user", "flow", "customer"] },
+        { name: "Core Concept & Goals", isComplete: false, keywords: ["goal", "concept", "purpose", "objective"] },
+        { name: "Features & Prioritization", isComplete: false, keywords: ["feature", "prioritize", "priority", "important"] },
+        { name: "Target Audience & User Flow", isComplete: false, keywords: ["audience", "user", "flow", "customer"] },
         { name: "Platform & Technology", isComplete: false, keywords: ["platform", "technology", "tech stack", "framework"] },
         { name: "Data & Storage", isComplete: false, keywords: ["data", "storage", "database", "information"] },
         { name: "User Authentication & Security", isComplete: false, keywords: ["authentication", "security", "login", "password"] },
@@ -86,19 +86,25 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
     
     setAnalysis(initialAnalysis);
     onAnalysisComplete(initialAnalysis);
-  }, [onAnalysisComplete]);
-  
-  // Initialize chat with welcome message
-  useEffect(() => {
-    // Add initial assistant message
+    setIsPRDAvailable(false);
+    
+    // Reset messages
     setMessages([{
       id: '1',
       content: "Hi there, I'm your business analyst assistant. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
       sender: 'agent',
       timestamp: new Date()
     }]);
-  }, []);
-
+    
+    // Reset conversation in OpenAI service
+    openAIService.resetConversation();
+  };
+  
+  // Initialize analysis and messages on first load
+  useEffect(() => {
+    resetAnalysis();
+  }, [resetTrigger, onAnalysisComplete]);
+  
   const handleApiKeySet = (apiKey: string) => {
     openAIService.setApiKey(apiKey);
     setShowApiKeyInput(false);
@@ -218,6 +224,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
     }
   };
 
+  // Calculate completed categories for the header
+  const completedCategories = analysis?.categories.filter(cat => cat.isComplete).length || 0;
+  const totalCategories = analysis?.categories.length || 12;
+
   return (
     <motion.div 
       className="relative w-full h-full flex flex-col rounded-lg overflow-hidden bg-white bg-opacity-50 glass"
@@ -231,6 +241,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
         onApiKeyClick={() => setShowApiKeyInput(!showApiKeyInput)} 
         onGeneratePRD={handleGeneratePRD}
         isPRDAvailable={isPRDAvailable}
+        completedCategories={completedCategories}
+        totalCategories={totalCategories}
       />
       
       {showApiKeyInput && (

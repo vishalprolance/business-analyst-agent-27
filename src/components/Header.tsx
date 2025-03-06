@@ -3,7 +3,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { fadeInAnimation } from '@/utils/animation';
 
-const Header = () => {
+interface HeaderProps {
+  onNewAnalysis?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onNewAnalysis }) => {
   return (
     <motion.header 
       className="w-full flex justify-between items-center py-6 px-6 sm:px-8 md:px-12 glass rounded-b-lg border-b border-analyst-border"
@@ -36,7 +40,10 @@ const Header = () => {
         <button className="text-sm text-analyst-text hover:text-analyst-accent transition-colors duration-300">
           History
         </button>
-        <button className="px-4 py-2 text-sm bg-analyst-accent text-white rounded-full hover:bg-blue-600 transition-colors duration-300">
+        <button 
+          className="px-4 py-2 text-sm bg-analyst-accent text-white rounded-full hover:bg-blue-600 transition-colors duration-300"
+          onClick={onNewAnalysis}
+        >
           New Analysis
         </button>
       </motion.div>
