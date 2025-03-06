@@ -1,7 +1,6 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Mic, BarChart3, ChevronRight, FileText } from 'lucide-react';
+import { Send, Mic, BarChart3, ChevronRight, FileText, Settings } from 'lucide-react';
 import { slideUpAnimation } from '@/utils/animation';
 import { 
   generatePRD, 
@@ -11,6 +10,7 @@ import {
 } from '@/utils/documentGenerator';
 import { useToast } from '@/hooks/use-toast';
 import { OpenAIService } from '@/services/openai';
+import ApiKeyInput from '@/components/ApiKeyInput';
 
 interface Message {
   id: string;
@@ -29,6 +29,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
   const [isTyping, setIsTyping] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
   const [isPRDAvailable, setIsPRDAvailable] = useState(false);
+  const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const [openAIService] = useState<OpenAIService>(new OpenAIService(BUSINESS_ANALYST_PROMPT));
   const messageEndRef = useRef<null | HTMLDivElement>(null);
   const { toast } = useToast();
@@ -48,6 +49,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const handleApiKeySet = (apiKey: string) => {
+    openAIService.setApiKey(apiKey);
+    setShowApiKeyInput(false);
+  };
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
@@ -155,6 +161,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
             <span className="text-sm text-analyst-text">Online</span>
           </div>
           
+          <motion.button 
+            className="flex items-center space-x-1 text-xs px-3 py-1 bg-gray-100 text-analyst-text rounded-full hover:bg-gray-200 transition-colors"
+            onClick={() => setShowApiKeyInput(!showApiKeyInput)}
+          >
+            <Settings size={12} />
+            <span>API Key</span>
+          </motion.button>
+          
           {isPRDAvailable && (
             <motion.button 
               className="flex items-center space-x-1 text-xs px-3 py-1 bg-analyst-accent text-white rounded-full hover:bg-blue-600 transition-colors"
@@ -169,6 +183,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
           )}
         </div>
       </div>
+      
+      {showApiKeyInput && (
+        <ApiKeyInput 
+          onApiKeySet={handleApiKeySet} 
+          initialValue={openAIService.getApiKey()}
+        />
+      )}
       
       <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10">
         {messages.map((message) => (

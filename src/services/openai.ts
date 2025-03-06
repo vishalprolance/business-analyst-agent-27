@@ -1,4 +1,3 @@
-
 import { toast } from "@/hooks/use-toast";
 
 // Define types for OpenAI requests and responses
@@ -32,7 +31,7 @@ interface OpenAICompletionResponse {
 }
 
 export class OpenAIService {
-  // API key - This is a valid API key for testing purposes
+  // Default API key - Users should replace this with their own
   private apiKey: string = "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";
   private systemPrompt: string;
   private conversation: OpenAIMessage[] = [];
@@ -41,10 +40,18 @@ export class OpenAIService {
   constructor(systemPrompt: string) {
     this.systemPrompt = systemPrompt;
     this.resetConversation();
+    
+    // Try to load API key from localStorage if available
+    const savedApiKey = localStorage.getItem('openai_api_key');
+    if (savedApiKey) {
+      this.apiKey = savedApiKey;
+    }
   }
 
   public setApiKey(key: string) {
     this.apiKey = key;
+    // Save to localStorage for persistence
+    localStorage.setItem('openai_api_key', key);
   }
 
   public getApiKey(): string {
