@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Settings, FileText } from 'lucide-react';
+import { Settings, FileText, BarChart2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface ChatHeaderProps {
@@ -16,7 +16,13 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
 }) => {
   return (
     <div className="flex items-center justify-between p-4 border-b border-analyst-border z-10">
-      <h2 className="font-medium">Business Analyst Agent</h2>
+      <div className="flex items-center space-x-3">
+        <h2 className="font-medium">Business Analyst Agent</h2>
+        <span className="text-xs px-2 py-1 bg-analyst-light text-analyst-accent rounded-full">
+          Progress: 3/12
+        </span>
+      </div>
+      
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2">
           <span className="w-2 h-2 bg-green-500 rounded-full"></span>
