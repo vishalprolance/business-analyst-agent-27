@@ -24,7 +24,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isTyping }) => {
   }, [messages, isTyping]);
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10 scrollbar-chat">
+    <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10 scrollbar-chat h-full max-h-[calc(100vh-180px)]">
       {messages.map((message) => (
         <ChatMessage
           key={message.id}

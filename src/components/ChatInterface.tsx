@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
@@ -14,7 +13,6 @@ import ApiKeyInput from '@/components/ApiKeyInput';
 import ChatHeader from '@/components/chat/ChatHeader';
 import MessageList from '@/components/chat/MessageList';
 import ChatInput from '@/components/chat/ChatInput';
-import ChatFooter from '@/components/chat/ChatFooter';
 
 interface Message {
   id: string;
@@ -260,7 +258,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
       
       <ChatInput onSendMessage={handleSendMessage} />
       
-      <ChatFooter />
     </motion.div>
   );
 };

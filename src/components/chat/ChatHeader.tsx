@@ -19,7 +19,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   totalCategories
 }) => {
   return (
-    <div className="flex items-center justify-between p-4 border-b border-analyst-border z-10">
+    <div className="flex items-center justify-between p-4 border-b border-analyst-border z-10 w-full">
       <div className="flex items-center space-x-3">
         <h2 className="font-medium">Business Analyst Agent</h2>
         <span className="text-xs px-2 py-1 bg-analyst-light text-analyst-accent rounded-full">
