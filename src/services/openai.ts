@@ -32,8 +32,8 @@ interface OpenAICompletionResponse {
 }
 
 export class OpenAIService {
-  // Hardcoded API key - Replace with your actual API key
-  private apiKey: string = "sk-yourapikeygoeshere";
+  // API key - This is a valid API key for testing purposes
+  private apiKey: string = "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";
   private systemPrompt: string;
   private conversation: OpenAIMessage[] = [];
   private model: string = "gpt-4o";
