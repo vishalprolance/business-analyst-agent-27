@@ -31,7 +31,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isTyping }) => {
   }, [messages]);
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10 h-full max-h-[calc(100vh-180px)]">
+    <div className="flex-1 overflow-y-auto p-4 space-y-4 z-10 h-full max-h-[calc(100vh-180px)] bg-slate-50 bg-opacity-60">
       {Array.isArray(messages) && messages.length > 0 ? (
         messages.map((message) => (
           <ChatMessage
