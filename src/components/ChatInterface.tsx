@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
@@ -14,7 +15,7 @@ import ChatHeader from '@/components/chat/ChatHeader';
 import MessageList from '@/components/chat/MessageList';
 import ChatInput from '@/components/chat/ChatInput';
 
-interface Message {
+export interface Message {
   id: string;
   content: string;
   sender: 'user' | 'agent';
@@ -51,6 +52,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
   const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const [openAIService] = useState<OpenAIService>(new OpenAIService(BUSINESS_ANALYST_PROMPT));
   const { toast } = useToast();
+  
+  // Initialize analysis and messages on first load or reset
+  useEffect(() => {
+    console.log("ChatInterface reset triggered", resetTrigger);
+    resetAnalysis();
+  }, [resetTrigger, onAnalysisComplete]);
   
   const resetAnalysis = () => {
     const initialAnalysis: AnalysisData = {
@@ -94,20 +101,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
       timestamp: new Date()
     };
     
+    console.log("Setting initial message:", initialMessage);
+    
     // Set messages state with the initial message
     setMessages([initialMessage]);
     
     // Reset conversation in OpenAI service
     openAIService.resetConversation();
-    
-    console.log("Chat reset with initial message:", initialMessage);
   };
-  
-  // Initialize analysis and messages on first load or reset
-  useEffect(() => {
-    resetAnalysis();
-    console.log("Chat interface initialized");
-  }, [resetTrigger, onAnalysisComplete]);
   
   const handleApiKeySet = (apiKey: string) => {
     openAIService.setApiKey(apiKey);
@@ -166,13 +167,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
       timestamp: new Date()
     };
     
-    console.log("User message:", userMessage);
+    console.log("Adding user message:", userMessage);
     
-    // Update messages with the new user message
     setMessages(prevMessages => {
-      const updatedMessages = [...prevMessages, userMessage];
-      console.log("Updated messages after adding user message:", updatedMessages);
-      return updatedMessages;
+      const newMessages = [...prevMessages, userMessage];
+      console.log("New messages array after adding user message:", newMessages);
+      return newMessages;
     });
     
     // Update categories based on user message
@@ -196,13 +196,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
         timestamp: new Date()
       };
       
-      console.log("Agent response:", agentMessage);
+      console.log("Adding agent response:", agentMessage);
       
-      // Update messages with the new agent message
       setMessages(prevMessages => {
-        const updatedMessages = [...prevMessages, agentMessage];
-        console.log("Updated messages after adding agent message:", updatedMessages);
-        return updatedMessages;
+        const newMessages = [...prevMessages, agentMessage];
+        console.log("New messages array after adding agent message:", newMessages, "length:", newMessages.length);
+        return newMessages;
       });
       
       // Update categories based on agent response
@@ -244,6 +243,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete, reset
   // Calculate completed categories for the header
   const completedCategories = analysis?.categories.filter(cat => cat.isComplete).length || 0;
   const totalCategories = analysis?.categories.length || 12;
+
+  // Debug output for messages
+  useEffect(() => {
+    console.log("ChatInterface current messages:", messages);
+  }, [messages]);
 
   return (
     <motion.div 

@@ -12,12 +12,15 @@ const ChatMessage: React.FC<MessageProps> = ({ content, isUser, timestamp }) => 
   // Ensure content isn't undefined or null
   const messageContent = content || "";
   
+  console.log("Rendering ChatMessage:", { content: messageContent, isUser, timestamp });
+  
   return (
     <motion.div
       className={`flex ${isUser ? 'justify-end' : 'justify-start'} w-full mb-4`}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
+      data-testid={`chat-message-${isUser ? 'user' : 'agent'}`}
     >
       <div 
         className={`max-w-[80%] p-4 rounded-lg shadow-sm ${
