@@ -1,9 +1,13 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Mic, BarChart3, ChevronRight, FileText } from 'lucide-react';
 import { slideUpAnimation } from '@/utils/animation';
-import { generatePRD, generateWordDocumentBlob, downloadDocument } from '@/utils/documentGenerator';
+import { 
+  generatePRD, 
+  generateWordDocumentBlob, 
+  downloadDocument, 
+  BUSINESS_ANALYST_PROMPT 
+} from '@/utils/documentGenerator';
 import { useToast } from '@/hooks/use-toast';
 
 interface Message {
@@ -22,7 +26,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "I'm your business analyst assistant. How can I help you today? I can analyze your business data and generate a Product Requirements Document based on our discussion.",
+      content: "I'm your business analyst assistant. How can I help you today? I can analyze your business data, guide you through planning your app idea, and generate a Product Requirements Document based on our discussion.",
       sender: 'agent',
       timestamp: new Date()
     }
@@ -30,18 +34,22 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
   const [isTyping, setIsTyping] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
   const [isPRDAvailable, setIsPRDAvailable] = useState(false);
+  const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const messageEndRef = useRef<null | HTMLDivElement>(null);
   const { toast } = useToast();
   
-  // Sample responses for demo purposes
-  const sampleResponses = [
-    "I'll analyze that for you. Let me break down the key metrics from your sales data. This will help us create a comprehensive Product Requirements Document.",
-    "Based on your current growth rate of 15% quarter-over-quarter, I project you'll reach your annual target by October. We should include this trajectory in the PRD.",
-    "I've identified three areas for improvement in your customer acquisition funnel: landing page conversion, email response rates, and trial-to-paid conversion. These will be key requirements in our document.",
-    "Your customer lifetime value has increased by 22% since implementing the new retention strategy. This is an important metric to highlight in our requirements analysis.",
-    "Looking at your market positioning, I recommend focusing on the enterprise segment where your profit margins are 3x higher than SMB customers. I'll add this to our PRD recommendations."
+  // Use the improved role-play prompt for more structured conversations
+  const questions = [
+    "Can you describe your app idea in simple terms? What problem does it solve?",
+    "Who are the primary users of your app, and what benefits will they get?",
+    "What are the core features you want in your MVP (Minimum Viable Product)?",
+    "Do you have any preferences for platforms (web, mobile, desktop) or technologies?",
+    "How do you plan to monetize your app? Is it free, paid, or freemium?",
+    "Do you have any specific timeline or budget constraints for development?",
+    "Are there any specific integrations or third-party services you need?",
+    "How do you envision your app scaling as it grows in users?"
   ];
-
+  
   // Auto-scroll to bottom of messages
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -68,20 +76,38 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
     setTimeout(() => {
       setIsTyping(false);
       
-      // Select random response for demo
-      const randomResponse = sampleResponses[Math.floor(Math.random() * sampleResponses.length)];
+      let agentResponse: string;
+      
+      // If we're in the structured question flow and there are more questions
+      if (currentQuestion < questions.length) {
+        agentResponse = questions[currentQuestion];
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
+        // Otherwise, provide a contextual response based on the conversation
+        // These are sample responses for the demo
+        const contextualResponses = [
+          "That's really helpful information! Let me analyze that further.",
+          "Great insights. This will help us create a more targeted Product Requirements Document.",
+          "I understand your requirements better now. Let me incorporate these details into our analysis.",
+          "Thank you for sharing that. This gives us a clearer picture of your vision.",
+          "I'm noting these important points for your PRD. Is there anything else you'd like to add?",
+          "Based on what you've shared, I can help create a comprehensive PRD that aligns with your goals."
+        ];
+        
+        agentResponse = contextualResponses[Math.floor(Math.random() * contextualResponses.length)];
+      }
       
       const agentMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: randomResponse,
+        content: agentResponse,
         sender: 'agent',
         timestamp: new Date()
       };
       
       setMessages(prev => [...prev, agentMessage]);
       
-      // Simulate analysis completion after response
-      if (messages.length > 2 || Math.random() > 0.3) {
+      // After a few messages, simulate analysis completion
+      if (messages.length > 4 || Math.random() > 0.5) {
         const sampleAnalysis = {
           metrics: {
             revenue: '$1.2M',
