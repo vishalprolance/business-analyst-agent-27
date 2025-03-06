@@ -26,7 +26,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "I'm your business analyst assistant. How can I help you today? I can analyze your business data, guide you through planning your app idea, and generate a Product Requirements Document based on our discussion.",
+      content: "Hi there, I'm your professional CTO advisor. I'll help you understand and plan your app idea through a series of questions. Once I have a clear picture, I can generate a comprehensive masterplan as a blueprint for your application. Let's start with the basics - could you describe your app idea in simple terms? What problem does it solve?",
       sender: 'agent',
       timestamp: new Date()
     }
@@ -34,20 +34,31 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
   const [isTyping, setIsTyping] = useState(false);
   const [analysis, setAnalysis] = useState<any>(null);
   const [isPRDAvailable, setIsPRDAvailable] = useState(false);
-  const [currentQuestion, setCurrentQuestion] = useState<number>(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const messageEndRef = useRef<null | HTMLDivElement>(null);
   const { toast } = useToast();
   
-  // Use the improved role-play prompt for more structured conversations
+  // Questions from the refined role-play prompt
   const questions = [
-    "Can you describe your app idea in simple terms? What problem does it solve?",
+    "What problem does your app solve?",
     "Who are the primary users of your app, and what benefits will they get?",
-    "What are the core features you want in your MVP (Minimum Viable Product)?",
-    "Do you have any preferences for platforms (web, mobile, desktop) or technologies?",
-    "How do you plan to monetize your app? Is it free, paid, or freemium?",
-    "Do you have any specific timeline or budget constraints for development?",
-    "Are there any specific integrations or third-party services you need?",
-    "How do you envision your app scaling as it grows in users?"
+    "How do you define success for this app?",
+    "What are the core features of the app?",
+    "Which features are essential for the MVP (Minimum Viable Product)?",
+    "Can you rank your features in order of priority?",
+    "Who is your ideal user (demographics, profession, behavior)?",
+    "Can you describe a typical user journey step by step?",
+    "Will this be a web app, mobile app, desktop app, or a combination?",
+    "Do you have any preferences for frameworks or technologies?",
+    "What kind of data will your app handle?",
+    "How do you plan to store and manage data?",
+    "How will users sign in? (Email/password, Google, LinkedIn, etc.)",
+    "Is this app free, paid, or freemium?",
+    "Does your app need to integrate with other services?",
+    "How many users do you expect initially? What about long-term?",
+    "What is your ideal timeline for development and launch?",
+    "Do you see this app expanding to other markets or industries?",
+    "Do you have any design references or inspiration?"
   ];
   
   // Auto-scroll to bottom of messages
@@ -79,19 +90,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
       let agentResponse: string;
       
       // If we're in the structured question flow and there are more questions
-      if (currentQuestion < questions.length) {
-        agentResponse = questions[currentQuestion];
-        setCurrentQuestion(currentQuestion + 1);
+      if (currentQuestionIndex < questions.length) {
+        agentResponse = questions[currentQuestionIndex];
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
       } else {
         // Otherwise, provide a contextual response based on the conversation
-        // These are sample responses for the demo
+        // These are concluding responses for the demo
         const contextualResponses = [
-          "That's really helpful information! Let me analyze that further.",
-          "Great insights. This will help us create a more targeted Product Requirements Document.",
-          "I understand your requirements better now. Let me incorporate these details into our analysis.",
-          "Thank you for sharing that. This gives us a clearer picture of your vision.",
-          "I'm noting these important points for your PRD. Is there anything else you'd like to add?",
-          "Based on what you've shared, I can help create a comprehensive PRD that aligns with your goals."
+          "Thank you for sharing all this valuable information! This gives me a comprehensive understanding of your app vision.",
+          "Based on everything you've shared, I can now help create a detailed Product Requirements Document for your application.",
+          "I've gathered enough information to generate a comprehensive masterplan for your app development process.",
+          "With all these details, I can now compile a complete PRD that will serve as a blueprint for your application.",
+          "Thank you for providing such thorough information about your app idea. I'm ready to generate your Product Requirements Document now."
         ];
         
         agentResponse = contextualResponses[Math.floor(Math.random() * contextualResponses.length)];
@@ -107,7 +117,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
       setMessages(prev => [...prev, agentMessage]);
       
       // After a few messages, simulate analysis completion
-      if (messages.length > 4 || Math.random() > 0.5) {
+      if (messages.length > 6 || currentQuestionIndex >= Math.floor(questions.length / 2)) {
         const sampleAnalysis = {
           metrics: {
             revenue: '$1.2M',
@@ -235,7 +245,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onAnalysisComplete }) => 
         <input
           type="text"
           className="flex-1 p-2 px-4 rounded-full border border-analyst-border bg-white focus:ring-2 focus:ring-analyst-accent focus:border-transparent transition-all"
-          placeholder="Ask a question about your business data..."
+          placeholder="Tell me about your app idea..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}

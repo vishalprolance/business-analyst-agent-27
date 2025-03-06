@@ -45,7 +45,7 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              Business Intelligence Assistant
+              CTO Advisor & PRD Generator
             </motion.h1>
             <motion.p 
               className="text-analyst-text max-w-2xl mx-auto"
@@ -53,8 +53,8 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              Ask questions about your business data and get instant insights, 
-              visualizations, and actionable recommendations in a downloadable Product Requirements Document.
+              Chat with your friendly CTO assistant to plan your app idea and generate 
+              a comprehensive Product Requirements Document with insights and recommendations.
             </motion.p>
           </motion.div>
           
@@ -73,8 +73,8 @@ const Index = () => {
                 <BarChart2 className="w-6 h-6 text-analyst-accent" />
               </div>
               <div>
-                <h3 className="font-medium text-sm">Data Analysis</h3>
-                <p className="text-xs text-analyst-text mt-1">Visualize key metrics and trends</p>
+                <h3 className="font-medium text-sm">Requirement Analysis</h3>
+                <p className="text-xs text-analyst-text mt-1">Structured information gathering</p>
               </div>
             </motion.div>
             
@@ -87,8 +87,8 @@ const Index = () => {
                 <BrainCircuit className="w-6 h-6 text-purple-500" />
               </div>
               <div>
-                <h3 className="font-medium text-sm">AI-Powered Insights</h3>
-                <p className="text-xs text-analyst-text mt-1">Uncover hidden patterns</p>
+                <h3 className="font-medium text-sm">CTO-Level Advice</h3>
+                <p className="text-xs text-analyst-text mt-1">Professional guidance</p>
               </div>
             </motion.div>
             
@@ -101,8 +101,8 @@ const Index = () => {
                 <TrendingUp className="w-6 h-6 text-green-500" />
               </div>
               <div>
-                <h3 className="font-medium text-sm">Growth Strategy</h3>
-                <p className="text-xs text-analyst-text mt-1">Actionable recommendations</p>
+                <h3 className="font-medium text-sm">Master Planning</h3>
+                <p className="text-xs text-analyst-text mt-1">Strategic development roadmap</p>
               </div>
             </motion.div>
             
@@ -116,7 +116,7 @@ const Index = () => {
               </div>
               <div>
                 <h3 className="font-medium text-sm">PRD Generation</h3>
-                <p className="text-xs text-analyst-text mt-1">Download requirement docs</p>
+                <p className="text-xs text-analyst-text mt-1">Download comprehensive docs</p>
               </div>
             </motion.div>
           </motion.div>
@@ -139,8 +139,8 @@ const Index = () => {
                   </div>
                   <h3 className="text-lg font-medium mb-2">Start a conversation</h3>
                   <p className="text-analyst-text text-sm max-w-md mx-auto">
-                    Ask the AI assistant about your business metrics, KPIs, or market trends. 
-                    Analysis results will appear here, and you can generate a Product Requirements Document.
+                    Tell your CTO advisor about your app idea. Share your vision and requirements
+                    to generate a comprehensive Product Requirements Document with actionable insights.
                   </p>
                 </motion.div>
               )}
@@ -153,7 +153,7 @@ const Index = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
           >
-            Powered by advanced business intelligence algorithms • Updated in real-time
+            Powered by advanced product planning algorithms • Updated in real-time
           </motion.div>
         </main>
       </div>
