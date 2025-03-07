@@ -9,6 +9,7 @@ import AnalysisDisplay from '@/components/AnalysisDisplay';
 import { BarChart2, BrainCircuit, TrendingUp, Zap, FileText } from 'lucide-react';
 import { Toaster } from "@/components/ui/toaster";
 import { Message } from '@/components/ChatInterface';
+import { Button } from "@/components/ui/button";
 
 interface Analysis {
   metrics: {

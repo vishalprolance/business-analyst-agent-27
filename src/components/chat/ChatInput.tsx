@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Send, Mic } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -27,12 +28,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
 
   return (
     <div className="p-4 border-t border-analyst-border flex items-center space-x-2 z-10 bg-white bg-opacity-90">
-      <button 
-        className="p-2 text-analyst-text hover:text-analyst-accent transition-colors"
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="rounded-full h-9 w-9 text-analyst-text hover:text-analyst-accent"
         aria-label="Voice input"
       >
-        <Mic size={20} />
-      </button>
+        <Mic size={18} />
+      </Button>
       
       <input
         type="text"
@@ -45,19 +48,21 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         data-testid="chat-input"
       />
       
-      <button 
-        className={`p-2 rounded-full ${
+      <Button 
+        variant={input.trim() ? "default" : "secondary"}
+        size="icon"
+        className={`rounded-full h-9 w-9 ${
           input.trim()
-            ? 'bg-analyst-accent text-white hover:bg-blue-600' 
+            ? 'bg-analyst-accent hover:bg-blue-600' 
             : 'bg-gray-100 text-gray-400'
-        } transition-colors`}
+        }`}
         onClick={handleSend}
         disabled={!input.trim()}
         aria-label="Send message"
         data-testid="send-button"
       >
-        <Send size={20} />
-      </button>
+        <Send size={18} />
+      </Button>
     </div>
   );
 };

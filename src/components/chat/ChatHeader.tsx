@@ -2,6 +2,7 @@
 import React from 'react';
 import { Settings, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Button } from "@/components/ui/button";
 
 interface ChatHeaderProps {
   onApiKeyClick: () => void;
@@ -27,31 +28,38 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         </span>
       </div>
       
-      <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 mr-2">
           <span className="w-2 h-2 bg-green-500 rounded-full"></span>
           <span className="text-sm text-analyst-text">Online</span>
         </div>
         
-        <motion.button 
-          className="flex items-center space-x-1 text-xs px-3 py-1 bg-gray-100 text-analyst-text rounded-full hover:bg-gray-200 transition-colors"
+        <Button 
+          variant="outline" 
+          size="sm" 
           onClick={onApiKeyClick}
+          className="h-8"
         >
-          <Settings size={12} />
-          <span>API Key</span>
-        </motion.button>
+          <Settings className="h-3.5 w-3.5 mr-1" />
+          API Key
+        </Button>
         
         {isPRDAvailable && (
-          <motion.button 
-            className="flex items-center space-x-1 text-xs px-3 py-1 bg-analyst-accent text-white rounded-full hover:bg-blue-600 transition-colors"
-            onClick={onGeneratePRD}
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           >
-            <FileText size={12} />
-            <span>Generate Master Plan</span>
-          </motion.button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={onGeneratePRD}
+              className="bg-analyst-accent hover:bg-blue-600 text-white h-8"
+            >
+              <FileText className="h-3.5 w-3.5 mr-1" />
+              Generate Master Plan
+            </Button>
+          </motion.div>
         )}
       </div>
     </div>
