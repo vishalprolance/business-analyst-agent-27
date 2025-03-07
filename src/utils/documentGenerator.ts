@@ -147,6 +147,213 @@ We value your feedback on this master plan and are open to revisions based on yo
   return prdContent;
 };
 
+// This generates a detailed development roadmap with task-level breakdown
+export const generateDetailedRoadmap = (analysis: any, messages: any[]) => {
+  // Extract basic info about the project from the conversation
+  const appDescription = extractAppDescription(messages);
+  const coreFeatures = extractCoreFeatures(messages);
+  const technicalPreferences = extractTechnicalPreferences(messages);
+  
+  // Generate the detailed roadmap content
+  const roadmapContent = `
+# Detailed Development Roadmap
+
+## Project: ${appDescription ? appDescription.split('.')[0] : "App Development Plan"}
+
+This document provides a comprehensive task-level breakdown of the development process, including estimated effort and dependencies for each phase.
+
+---
+
+## Phase 1: Research and Requirements Gathering (2 weeks)
+
+### Tasks:
+| Task | Description | Estimated Effort | Dependencies |
+|------|-------------|------------------|--------------|
+| 1.1 | Stakeholder interviews | 2-3 days | None |
+| 1.2 | Market research | 2-3 days | None |
+| 1.3 | Competitive analysis | 2 days | Task 1.2 |
+| 1.4 | User persona development | 1-2 days | Task 1.1 |
+| 1.5 | Initial requirements documentation | 2-3 days | Tasks 1.1-1.4 |
+| 1.6 | Requirements review with stakeholders | 1 day | Task 1.5 |
+| 1.7 | Requirement finalization | 1 day | Task 1.6 |
+
+### Deliverables:
+- Comprehensive requirements document
+- User personas
+- Market analysis report
+- Initial feature prioritization
+
+---
+
+## Phase 2: Design and Architecture (3 weeks)
+
+### Tasks:
+| Task | Description | Estimated Effort | Dependencies |
+|------|-------------|------------------|--------------|
+| 2.1 | Technical stack selection | 2 days | Phase 1 |
+| 2.2 | System architecture design | 3-4 days | Task 2.1 |
+| 2.3 | Database schema design | 2-3 days | Task 2.2 |
+| 2.4 | API endpoint planning | 2 days | Task 2.2 |
+| 2.5 | UI/UX wireframing | 3-4 days | Phase 1 |
+| 2.6 | UI mockup creation | 3-4 days | Task 2.5 |
+| 2.7 | Design system setup | 2 days | Task 2.6 |
+| 2.8 | Architecture and design review | 1-2 days | Tasks 2.1-2.7 |
+
+### Deliverables:
+- System architecture document
+- Database schema diagrams
+- API specifications
+- UI/UX wireframes and mockups
+- Design system
+
+---
+
+## Phase 3: MVP Development (6 weeks)
+
+### Tasks:
+#### Backend Development (3 weeks)
+| Task | Description | Estimated Effort | Dependencies |
+|------|-------------|------------------|--------------|
+| 3.1 | Project setup and configuration | 1 day | Phase 2 |
+| 3.2 | Database implementation | 2-3 days | Task 3.1 |
+| 3.3 | User authentication system | 3-4 days | Task 3.2 |
+| 3.4 | Core API development - Part 1 | 3-4 days | Task 3.3 |
+| 3.5 | Core API development - Part 2 | 3-4 days | Task 3.4 |
+| 3.6 | API testing and documentation | 2-3 days | Tasks 3.4, 3.5 |
+
+#### Frontend Development (3 weeks)
+| Task | Description | Estimated Effort | Dependencies |
+|------|-------------|------------------|--------------|
+| 3.7 | Frontend project setup | 1 day | Phase 2 |
+| 3.8 | Component library implementation | 2-3 days | Task 3.7 |
+| 3.9 | User authentication UI | 2-3 days | Task 3.8 |
+| 3.10 | Core feature implementation - Part 1 | 3-4 days | Task 3.9 |
+| 3.11 | Core feature implementation - Part 2 | 3-4 days | Task 3.10 |
+| 3.12 | Responsive design implementation | 2-3 days | Tasks 3.10, 3.11 |
+
+### Deliverables:
+- Functional MVP with core features
+- API documentation
+- Initial user documentation
+
+---
+
+## Phase 4: Testing and Quality Assurance (2 weeks)
+
+### Tasks:
+| Task | Description | Estimated Effort | Dependencies |
+|------|-------------|------------------|--------------|
+| 4.1 | Test plan development | 1-2 days | Phase 3 |
+| 4.2 | Unit testing | 2-3 days | Phase 3 |
+| 4.3 | Integration testing | 2-3 days | Task 4.2 |
+| 4.4 | User acceptance testing setup | 1 day | Task 4.1 |
+| 4.5 | User acceptance testing execution | 2-3 days | Task 4.4 |
+| 4.6 | Bug fixing and refinements | 3-4 days | Tasks 4.2-4.5 |
+| 4.7 | Performance testing | 1-2 days | Task 4.6 |
+
+### Deliverables:
+- Comprehensive test documentation
+- Quality assurance report
+- Refined application ready for beta
+
+---
+
+## Phase 5: Beta Launch and Feedback Collection (2 weeks)
+
+### Tasks:
+| Task | Description | Estimated Effort | Dependencies |
+|------|-------------|------------------|--------------|
+| 5.1 | Beta deployment planning | 1 day | Phase 4 |
+| 5.2 | Beta environment setup | 1-2 days | Task 5.1 |
+| 5.3 | Beta user onboarding | 1 day | Task 5.2 |
+| 5.4 | Monitoring system setup | 1 day | Task 5.2 |
+| 5.5 | Feedback collection system setup | 1 day | Task 5.2 |
+| 5.6 | Beta period active monitoring | 5-7 days | Tasks 5.3-5.5 |
+| 5.7 | Feedback analysis | 1-2 days | Task 5.6 |
+
+### Deliverables:
+- Beta version of the application
+- Feedback collection and analysis report
+- Prioritized improvements list
+
+---
+
+## Phase 6: Refinement and Official Launch (2 weeks)
+
+### Tasks:
+| Task | Description | Estimated Effort | Dependencies |
+|------|-------------|------------------|--------------|
+| 6.1 | High-priority improvements implementation | 3-5 days | Phase 5 |
+| 6.2 | Final quality assurance | 2-3 days | Task 6.1 |
+| 6.3 | Production deployment planning | 1 day | Task 6.2 |
+| 6.4 | User documentation finalization | 1-2 days | Task 6.1 |
+| 6.5 | Marketing materials preparation | 2-3 days | Phase 5 |
+| 6.6 | Production deployment | 1 day | Tasks 6.3, 6.4 |
+| 6.7 | Launch announcement | 1 day | Task 6.6 |
+
+### Deliverables:
+- Production-ready application
+- Complete user documentation
+- Marketing materials
+- Official launch
+
+---
+
+## Phase 7: Post-Launch Monitoring and Updates (Ongoing)
+
+### Tasks:
+| Task | Description | Estimated Effort | Dependencies |
+|------|-------------|------------------|--------------|
+| 7.1 | Monitoring system refinement | 1-2 days | Phase 6 |
+| 7.2 | Bug tracking and fixing | Ongoing | Phase 6 |
+| 7.3 | User feedback collection and analysis | Ongoing | Phase 6 |
+| 7.4 | Performance optimization | 3-5 days (every 2-3 months) | Task 7.2 |
+| 7.5 | Security audits | 2-3 days (quarterly) | Phase 6 |
+| 7.6 | Feature updates planning | 5 days (quarterly) | Tasks 7.2, 7.3 |
+| 7.7 | Feature implementation | Varies by feature | Task 7.6 |
+
+### Deliverables:
+- Regular performance reports
+- Security audit reports
+- New feature releases
+- Maintenance updates
+
+---
+
+## Risk Assessment and Mitigation
+
+| Risk | Impact | Probability | Mitigation Strategy |
+|------|--------|------------|---------------------|
+| Technical challenges with integrations | Medium | Medium | Early proof-of-concept testing, alternative solutions identified |
+| Timeline delays | High | Medium | Buffer time included in estimates, clear prioritization of features |
+| Resource constraints | Medium | Low | Flexible resource allocation, clear documentation for onboarding |
+| Scope creep | High | High | Rigorous change management process, clear MVP definition |
+| User adoption challenges | High | Medium | Early user involvement, comprehensive onboarding, focus on UX |
+
+---
+
+## Resource Planning
+
+### Development Team:
+- 1 Project Manager
+- 1 Backend Developer
+- 1 Frontend Developer
+- 1 UI/UX Designer
+- 1 QA Engineer (part-time)
+
+### Additional Resources:
+- DevOps support for deployment and infrastructure
+- Marketing support for launch
+- Customer support training for post-launch
+
+---
+
+This detailed roadmap provides a comprehensive breakdown of the development process. While estimates and specific tasks may need adjustment as the project progresses, this framework establishes clear expectations, dependencies, and deliverables for each phase of development.
+`;
+
+  return roadmapContent;
+};
+
 // Generate a markdown file blob
 export const generateMarkdownBlob = (content: string) => {
   const blob = new Blob([content], { type: 'text/markdown' });
