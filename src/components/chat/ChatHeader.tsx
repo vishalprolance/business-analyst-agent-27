@@ -21,7 +21,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   completedCategories,
   totalCategories
 }) => {
-  const handleGenerateRoadmap = (analysis: any, messages: any[]) => {
+  const handleGenerateRoadmap = (event: React.MouseEvent<HTMLButtonElement>) => {
     try {
       // Generate the detailed roadmap content
       const roadmapContent = generateDetailedRoadmap({}, []);
