@@ -246,11 +246,23 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     
     try {
       console.log("ChatInterface.handleGeneratePRD: Generating PRD content...");
-      // Generate the PRD content
-      const content = generatePRD(analysis, messages);
+      
+      // Add the additional requirement prompt to enhance the PRD generation
+      const enhancedMessages = [...messages];
+      
+      // Add the detailed requirements prompt as if it came from the user
+      enhancedMessages.push({
+        id: `system-${Date.now().toString()}`,
+        content: "Generate Detailed Requirements elaborating each points so that any developer can understand",
+        sender: 'user',
+        timestamp: new Date()
+      });
+      
+      // Generate the PRD content with enhanced messages
+      const content = generatePRD(analysis, enhancedMessages);
       setPrdContent(content);
       setShowPRDPreview(true);
-      console.log("PRD preview ready to show");
+      console.log("PRD preview ready to show with enhanced requirements");
     } catch (error) {
       console.error("Error generating PRD preview:", error);
       toast({

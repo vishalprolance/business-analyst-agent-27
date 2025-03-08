@@ -33,7 +33,10 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             variant="outline" 
             size="sm" 
             onClick={onTestPRDTrigger}
-            className="h-8 bg-amber-100 hover:bg-amber-200 text-amber-700 border-amber-300"
+            className={`h-8 ${isPRDAvailable 
+              ? 'bg-amber-100 hover:bg-amber-200 text-amber-700 border-amber-300 animate-pulse' 
+              : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'}`}
+            disabled={!isPRDAvailable}
           >
             <FileText className="h-3.5 w-3.5 mr-1" />
             Generate Requirements
