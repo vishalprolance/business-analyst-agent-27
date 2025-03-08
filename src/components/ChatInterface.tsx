@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
@@ -262,6 +261,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
+  // Direct test function for the PRD generation - no event listener needed
+  const handleTestPRDTrigger = () => {
+    console.log("Direct test PRD trigger called!");
+    handleGeneratePRD();
+  };
+
   // Set up the event listener for the PRD trigger button
   useEffect(() => {
     console.log("Setting up PRD trigger event listener");
@@ -363,6 +368,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         isPRDAvailable={isPRDAvailable}
         completedCategories={completedCategories}
         totalCategories={totalCategories}
+        onTestPRDTrigger={handleTestPRDTrigger}
       />
       
       {showApiKeyInput && (

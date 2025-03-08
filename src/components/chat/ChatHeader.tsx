@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Settings } from 'lucide-react';
+import { Settings, TestTube } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 interface ChatHeaderProps {
@@ -8,13 +8,15 @@ interface ChatHeaderProps {
   isPRDAvailable: boolean;
   completedCategories: number;
   totalCategories: number;
+  onTestPRDTrigger?: () => void;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({ 
   onApiKeyClick, 
   isPRDAvailable,
   completedCategories,
-  totalCategories
+  totalCategories,
+  onTestPRDTrigger
 }) => {
   return (
     <div className="flex items-center justify-between p-4 border-b border-analyst-border z-10 w-full">
@@ -30,6 +32,18 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           <span className="w-2 h-2 bg-green-500 rounded-full"></span>
           <span className="text-sm text-analyst-text">Online</span>
         </div>
+        
+        {onTestPRDTrigger && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={onTestPRDTrigger}
+            className="h-8 bg-amber-100 hover:bg-amber-200 text-amber-700 border-amber-300"
+          >
+            <TestTube className="h-3.5 w-3.5 mr-1" />
+            Test PRD Trigger
+          </Button>
+        )}
         
         <Button 
           variant="outline" 
