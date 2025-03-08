@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { fadeInAnimation } from '@/utils/animation';
@@ -8,6 +9,8 @@ import AnalysisDisplay from '@/components/AnalysisDisplay';
 import { BarChart2, TrendingUp, Zap, FileText } from 'lucide-react';
 import { Toaster } from "@/components/ui/toaster";
 import { Message } from '@/components/ChatInterface';
+import { toast } from "@/components/ui/use-toast";
+import { generateDetailedRoadmap, generateMarkdownBlob, downloadDocument } from '@/utils/documentGenerator';
 
 interface Analysis {
   metrics: {
@@ -29,13 +32,21 @@ const Index = () => {
   const [resetTrigger, setResetTrigger] = useState(0);
   const [showHistory, setShowHistory] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
+  const [isPRDAvailable, setIsPRDAvailable] = useState(false);
 
   const handleAnalysisComplete = (newAnalysis: Analysis) => {
     setAnalysis(newAnalysis);
+    
+    // Check if PRD is available based on completed categories
+    if (newAnalysis.categories) {
+      const completedCount = newAnalysis.categories.filter(cat => cat.isComplete).length;
+      setIsPRDAvailable(completedCount >= 4);
+    }
   };
 
   const handleNewAnalysis = () => {
     setResetTrigger(prev => prev + 1);
+    setIsPRDAvailable(false);
   };
 
   const toggleHistory = () => {
@@ -45,6 +56,67 @@ const Index = () => {
   // Handler to receive messages from ChatInterface
   const handleMessagesUpdate = (messages: Message[]) => {
     setChatMessages(messages);
+  };
+
+  // Handler for Master Planning button click
+  const handleGenerateRoadmap = () => {
+    if (!isPRDAvailable) {
+      toast({
+        title: "Not enough information",
+        description: "Please answer more questions to unlock the Master Planning feature.",
+        duration: 3000,
+      });
+      return;
+    }
+    
+    try {
+      // Generate the detailed roadmap content
+      const roadmapContent = generateDetailedRoadmap({}, chatMessages);
+      
+      // Create a markdown blob and download it
+      const blob = generateMarkdownBlob(roadmapContent);
+      downloadDocument(blob, 'markdownplan.md');
+      
+      // Show success toast
+      toast({
+        title: "Development Roadmap Generated",
+        description: "Your detailed task-level development plan has been downloaded.",
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error("Error generating roadmap:", error);
+      toast({
+        title: "Error Generating Roadmap",
+        description: "There was a problem creating your development roadmap.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+  };
+
+  // Handler to trigger PRD generation in the ChatInterface
+  const handleGeneratePRD = () => {
+    if (!isPRDAvailable) {
+      toast({
+        title: "Not enough information",
+        description: "Please answer more questions to unlock the PRD generation feature.",
+        duration: 3000,
+      });
+      return;
+    }
+    
+    // Find the ChatInterface's PRD generation trigger element and click it
+    const prdButton = document.getElementById('generate-prd-trigger');
+    if (prdButton) {
+      prdButton.click();
+    } else {
+      toast({
+        title: "Error",
+        description: "PRD generation button not found. Please try again.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
   };
 
   return (
@@ -104,30 +176,36 @@ const Index = () => {
             </motion.div>
             
             <motion.div 
-              className="flex items-center bg-white p-5 rounded-lg border border-analyst-border"
-              whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
+              className={`flex items-center bg-white p-5 rounded-lg border ${isPRDAvailable ? 'border-green-500 cursor-pointer' : 'border-analyst-border'}`}
+              whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.1 }}
+              onClick={handleGenerateRoadmap}
             >
-              <div className="p-3 bg-green-50 rounded-xl mr-4">
-                <TrendingUp className="w-6 h-6 text-green-500" />
+              <div className={`p-3 ${isPRDAvailable ? 'bg-green-50' : 'bg-gray-50'} rounded-xl mr-4`}>
+                <TrendingUp className={`w-6 h-6 ${isPRDAvailable ? 'text-green-500' : 'text-gray-400'}`} />
               </div>
               <div>
-                <h3 className="font-medium text-sm">Master Planning</h3>
-                <p className="text-xs text-analyst-text mt-1">Strategic development roadmap</p>
+                <h3 className={`font-medium text-sm ${isPRDAvailable ? '' : 'text-gray-400'}`}>Master Planning</h3>
+                <p className={`text-xs ${isPRDAvailable ? 'text-analyst-text' : 'text-gray-400'} mt-1`}>
+                  {isPRDAvailable ? 'Click to generate development roadmap' : 'Answer more questions to unlock'}
+                </p>
               </div>
             </motion.div>
             
             <motion.div 
-              className="flex items-center bg-white p-5 rounded-lg border border-analyst-border"
-              whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
+              className={`flex items-center bg-white p-5 rounded-lg border ${isPRDAvailable ? 'border-amber-500 cursor-pointer' : 'border-analyst-border'}`}
+              whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.15 }}
+              onClick={handleGeneratePRD}
             >
-              <div className="p-3 bg-amber-50 rounded-xl mr-4">
-                <FileText className="w-6 h-6 text-amber-600" />
+              <div className={`p-3 ${isPRDAvailable ? 'bg-amber-50' : 'bg-gray-50'} rounded-xl mr-4`}>
+                <FileText className={`w-6 h-6 ${isPRDAvailable ? 'text-amber-600' : 'text-gray-400'}`} />
               </div>
               <div>
-                <h3 className="font-medium text-sm">PRD Generation</h3>
-                <p className="text-xs text-analyst-text mt-1">Download comprehensive docs</p>
+                <h3 className={`font-medium text-sm ${isPRDAvailable ? '' : 'text-gray-400'}`}>PRD Generation</h3>
+                <p className={`text-xs ${isPRDAvailable ? 'text-analyst-text' : 'text-gray-400'} mt-1`}>
+                  {isPRDAvailable ? 'Click to generate requirements document' : 'Answer more questions to unlock'}
+                </p>
               </div>
             </motion.div>
           </motion.div>

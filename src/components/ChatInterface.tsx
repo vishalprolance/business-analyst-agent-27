@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
@@ -257,6 +256,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
+  // Effect for the hidden button to trigger PRD generation
+  useEffect(() => {
+    const prdButton = document.getElementById('generate-prd-trigger');
+    if (prdButton) {
+      prdButton.addEventListener('click', handleGeneratePRD);
+      
+      return () => {
+        prdButton.removeEventListener('click', handleGeneratePRD);
+      };
+    }
+  }, [analysis, messages]);
+
   const handlePRDConfirmation = (updatedContent: string) => {
     try {
       // Generate and download both files
@@ -309,7 +320,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       <ChatHeader 
         onApiKeyClick={() => setShowApiKeyInput(!showApiKeyInput)} 
-        onGeneratePRD={handleGeneratePRD}
         isPRDAvailable={isPRDAvailable}
         completedCategories={completedCategories}
         totalCategories={totalCategories}
