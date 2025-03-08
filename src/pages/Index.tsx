@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import ChatInterface from '@/components/ChatInterface';
 import ChatHistory from '@/components/chat/ChatHistory';
 import AnalysisDisplay from '@/components/AnalysisDisplay';
-import { BarChart2, TrendingUp, Zap, FileText } from 'lucide-react';
+import { BarChart2, TrendingUp, FileText, Zap } from 'lucide-react';
 import { Toaster } from "@/components/ui/toaster";
 import { Message } from '@/components/ChatInterface';
 import { toast } from "@/components/ui/use-toast";
@@ -209,7 +209,7 @@ const Index = () => {
           >
             {/* Requirement Analysis Box */}
             <motion.div 
-              className="flex items-center bg-[#D3E4FD] p-5 rounded-lg border border-blue-200 shadow-sm"
+              className="flex items-center bg-[#D3E4FD] p-5 rounded-lg border border-blue-200 shadow-sm hover:shadow-md transition-all duration-300"
               whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
               transition={{ duration: 0.3 }}
             >
@@ -224,7 +224,7 @@ const Index = () => {
             
             {/* Master Planning Box */}
             <motion.div 
-              className={`flex items-center ${isPRDAvailable ? 'bg-[#F2FCE2] cursor-pointer' : 'bg-gray-100'} p-5 rounded-lg border ${isPRDAvailable ? 'border-green-200 shadow-sm' : 'border-gray-200'}`}
+              className={`flex items-center ${isPRDAvailable ? 'bg-[#F2FCE2] cursor-pointer' : 'bg-gray-100'} p-5 rounded-lg border ${isPRDAvailable ? 'border-green-200 shadow-sm hover:shadow-md' : 'border-gray-200'} transition-all duration-300`}
               whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.1 }}
               onClick={isPRDAvailable ? handleGenerateRoadmap : undefined}
@@ -246,7 +246,7 @@ const Index = () => {
             
             {/* PRD Generation Box */}
             <motion.div 
-              className={`flex items-center ${isPRDAvailable ? 'bg-[#FEF7CD] cursor-pointer' : 'bg-gray-100'} p-5 rounded-lg border ${isPRDAvailable ? 'border-yellow-200 shadow-sm' : 'border-gray-200'}`}
+              className={`flex items-center ${isPRDAvailable ? 'bg-[#FEF7CD] cursor-pointer' : 'bg-gray-100'} p-5 rounded-lg border ${isPRDAvailable ? 'border-yellow-200 shadow-sm hover:shadow-md' : 'border-gray-200'} transition-all duration-300`}
               whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.15 }}
               onClick={isPRDAvailable ? handleGeneratePRD : undefined}
