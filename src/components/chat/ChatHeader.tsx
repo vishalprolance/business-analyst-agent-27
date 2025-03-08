@@ -42,11 +42,12 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           API Key
         </Button>
         
-        {/* Hidden button that will be clicked programmatically */}
+        {/* Hidden button that will be clicked programmatically - important for PRD generation */}
         <button 
           id="generate-prd-trigger" 
           className="hidden"
           aria-hidden="true"
+          data-testid="hidden-prd-trigger"
         ></button>
       </div>
     </div>

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { fadeInAnimation } from '@/utils/animation';
 import Header from '@/components/Header';
@@ -41,6 +41,7 @@ const Index = () => {
     if (newAnalysis.categories) {
       const completedCount = newAnalysis.categories.filter(cat => cat.isComplete).length;
       setIsPRDAvailable(completedCount >= 4);
+      console.log(`Completed categories: ${completedCount}, PRD Available: ${completedCount >= 4}`);
     }
   };
 
@@ -60,6 +61,8 @@ const Index = () => {
 
   // Handler for Master Planning button click
   const handleGenerateRoadmap = () => {
+    console.log("handleGenerateRoadmap called, isPRDAvailable:", isPRDAvailable);
+    
     if (!isPRDAvailable) {
       toast({
         title: "Not enough information",
@@ -70,6 +73,7 @@ const Index = () => {
     }
     
     try {
+      console.log("Generating roadmap content...");
       // Generate the detailed roadmap content
       const roadmapContent = generateDetailedRoadmap({}, chatMessages);
       
@@ -96,6 +100,8 @@ const Index = () => {
 
   // Handler to trigger PRD generation in the ChatInterface
   const handleGeneratePRD = () => {
+    console.log("handleGeneratePRD called, isPRDAvailable:", isPRDAvailable);
+    
     if (!isPRDAvailable) {
       toast({
         title: "Not enough information",
@@ -108,8 +114,10 @@ const Index = () => {
     // Find the ChatInterface's PRD generation trigger element and click it
     const prdButton = document.getElementById('generate-prd-trigger');
     if (prdButton) {
+      console.log("Found PRD button, clicking it...");
       prdButton.click();
     } else {
+      console.error("PRD button not found");
       toast({
         title: "Error",
         description: "PRD generation button not found. Please try again.",
@@ -118,6 +126,11 @@ const Index = () => {
       });
     }
   };
+
+  // Use effect to log when isPRDAvailable changes
+  useEffect(() => {
+    console.log("isPRDAvailable changed:", isPRDAvailable);
+  }, [isPRDAvailable]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-analyst-light">
@@ -180,6 +193,10 @@ const Index = () => {
               whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.1 }}
               onClick={isPRDAvailable ? handleGenerateRoadmap : undefined}
+              role={isPRDAvailable ? "button" : undefined}
+              aria-disabled={!isPRDAvailable}
+              tabIndex={isPRDAvailable ? 0 : -1}
+              data-testid="master-planning-button"
             >
               <div className={`p-3 ${isPRDAvailable ? 'bg-green-50' : 'bg-gray-50'} rounded-xl mr-4`}>
                 <TrendingUp className={`w-6 h-6 ${isPRDAvailable ? 'text-green-500' : 'text-gray-400'}`} />
@@ -197,6 +214,10 @@ const Index = () => {
               whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.15 }}
               onClick={isPRDAvailable ? handleGeneratePRD : undefined}
+              role={isPRDAvailable ? "button" : undefined}
+              aria-disabled={!isPRDAvailable}
+              tabIndex={isPRDAvailable ? 0 : -1}
+              data-testid="prd-button"
             >
               <div className={`p-3 ${isPRDAvailable ? 'bg-amber-50' : 'bg-gray-50'} rounded-xl mr-4`}>
                 <FileText className={`w-6 h-6 ${isPRDAvailable ? 'text-amber-600' : 'text-gray-400'}`} />
