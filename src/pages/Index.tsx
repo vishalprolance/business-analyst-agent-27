@@ -179,7 +179,7 @@ const Index = () => {
               className={`flex items-center bg-white p-5 rounded-lg border ${isPRDAvailable ? 'border-green-500 cursor-pointer' : 'border-analyst-border'}`}
               whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.1 }}
-              onClick={handleGenerateRoadmap}
+              onClick={isPRDAvailable ? handleGenerateRoadmap : undefined}
             >
               <div className={`p-3 ${isPRDAvailable ? 'bg-green-50' : 'bg-gray-50'} rounded-xl mr-4`}>
                 <TrendingUp className={`w-6 h-6 ${isPRDAvailable ? 'text-green-500' : 'text-gray-400'}`} />
@@ -196,7 +196,7 @@ const Index = () => {
               className={`flex items-center bg-white p-5 rounded-lg border ${isPRDAvailable ? 'border-amber-500 cursor-pointer' : 'border-analyst-border'}`}
               whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.15 }}
-              onClick={handleGeneratePRD}
+              onClick={isPRDAvailable ? handleGeneratePRD : undefined}
             >
               <div className={`p-3 ${isPRDAvailable ? 'bg-amber-50' : 'bg-gray-50'} rounded-xl mr-4`}>
                 <FileText className={`w-6 h-6 ${isPRDAvailable ? 'text-amber-600' : 'text-gray-400'}`} />

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
 import { 
@@ -61,6 +62,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [showPRDPreview, setShowPRDPreview] = useState(false);
   const [prdContent, setPrdContent] = useState('');
   const { toast } = useToast();
+  
+  // Use a ref for the PRD button to ensure consistent access across renders
+  const prdButtonRef = useRef<HTMLButtonElement | null>(null);
   
   // Initialize analysis and messages on first load or reset
   useEffect(() => {
@@ -242,6 +246,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     if (!analysis) return;
     
     try {
+      console.log("Generating PRD...");
       // Generate the PRD content
       const content = generatePRD(analysis, messages);
       setPrdContent(content);
@@ -258,15 +263,27 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   // Effect for the hidden button to trigger PRD generation
   useEffect(() => {
-    const prdButton = document.getElementById('generate-prd-trigger');
-    if (prdButton) {
-      prdButton.addEventListener('click', handleGeneratePRD);
+    // Get the button element and store it in the ref
+    prdButtonRef.current = document.getElementById('generate-prd-trigger') as HTMLButtonElement;
+    
+    // Define the handler function
+    const triggerPRDGeneration = () => {
+      console.log("PRD generation triggered via hidden button");
+      handleGeneratePRD();
+    };
+    
+    // Attach the event listener to the button if it exists
+    if (prdButtonRef.current) {
+      prdButtonRef.current.addEventListener('click', triggerPRDGeneration);
       
+      // Clean up the event listener when the component unmounts
       return () => {
-        prdButton.removeEventListener('click', handleGeneratePRD);
+        if (prdButtonRef.current) {
+          prdButtonRef.current.removeEventListener('click', triggerPRDGeneration);
+        }
       };
     }
-  }, [analysis, messages]);
+  }, [analysis, messages]); // Re-run when analysis or messages change
 
   const handlePRDConfirmation = (updatedContent: string) => {
     try {
