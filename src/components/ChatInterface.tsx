@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
@@ -248,22 +247,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     try {
       console.log("ChatInterface.handleGeneratePRD: Generating PRD content...");
       
-      // Add the additional requirement prompt to enhance the PRD generation
-      const enhancedMessages = [...messages];
-      
-      // Add the detailed requirements prompt as if it came from the user
-      enhancedMessages.push({
-        id: `system-${Date.now().toString()}`,
-        content: "Generate Detailed Requirements elaborating each points so that any developer can understand",
-        sender: 'user',
-        timestamp: new Date()
-      });
-      
-      // Generate the PRD content with enhanced messages
-      const content = generatePRD(analysis, enhancedMessages);
+      // Use the original messages without adding the additional prompt
+      // Generate the PRD content with the messages as they are
+      const content = generatePRD(analysis, messages);
       setPrdContent(content);
       setShowPRDPreview(true);
-      console.log("PRD preview ready to show with enhanced requirements");
+      console.log("PRD preview ready to show");
     } catch (error) {
       console.error("Error generating PRD preview:", error);
       toast({
