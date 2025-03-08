@@ -224,21 +224,21 @@ const Index = () => {
             
             {/* Master Planning Box */}
             <motion.div 
-              className={`flex items-center ${isPRDAvailable ? 'bg-[#F2FCE2] cursor-pointer' : 'bg-gray-100'} p-5 rounded-lg border ${isPRDAvailable ? 'border-green-200 shadow-sm hover:shadow-md' : 'border-gray-200'} transition-all duration-300`}
-              whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
-              transition={{ duration: 0.3, delay: 0.1 }}
+              className={`flex items-center ${isPRDAvailable ? 'bg-[#F2FCE2]' : 'bg-[#F2FCE2] bg-opacity-70'} p-5 rounded-lg border border-green-200 shadow-sm hover:shadow-md transition-all duration-300 ${isPRDAvailable ? 'cursor-pointer' : ''}`}
+              whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
+              transition={{ duration: 0.3 }}
               onClick={isPRDAvailable ? handleGenerateRoadmap : undefined}
               role={isPRDAvailable ? "button" : undefined}
               aria-disabled={!isPRDAvailable}
               tabIndex={isPRDAvailable ? 0 : -1}
               data-testid="master-planning-button"
             >
-              <div className={`p-3 ${isPRDAvailable ? 'bg-green-100' : 'bg-gray-200'} rounded-xl mr-4`}>
-                <TrendingUp className={`w-6 h-6 ${isPRDAvailable ? 'text-green-500' : 'text-gray-400'}`} />
+              <div className="p-3 bg-green-100 rounded-xl mr-4">
+                <TrendingUp className="w-6 h-6 text-green-500" />
               </div>
               <div>
-                <h3 className={`font-medium text-sm ${isPRDAvailable ? '' : 'text-gray-400'}`}>Master Planning</h3>
-                <p className={`text-xs ${isPRDAvailable ? 'text-green-700' : 'text-gray-400'} mt-1`}>
+                <h3 className="font-medium text-sm">Master Planning</h3>
+                <p className="text-xs text-green-700 mt-1">
                   {isPRDAvailable ? 'Click to generate development roadmap' : 'Answer more questions to unlock'}
                 </p>
               </div>
@@ -246,21 +246,21 @@ const Index = () => {
             
             {/* PRD Generation Box */}
             <motion.div 
-              className={`flex items-center ${isPRDAvailable ? 'bg-[#FEF7CD] cursor-pointer' : 'bg-gray-100'} p-5 rounded-lg border ${isPRDAvailable ? 'border-yellow-200 shadow-sm hover:shadow-md' : 'border-gray-200'} transition-all duration-300`}
-              whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
-              transition={{ duration: 0.3, delay: 0.15 }}
+              className={`flex items-center ${isPRDAvailable ? 'bg-[#FEF7CD]' : 'bg-[#FEF7CD] bg-opacity-70'} p-5 rounded-lg border border-yellow-200 shadow-sm hover:shadow-md transition-all duration-300 ${isPRDAvailable ? 'cursor-pointer' : ''}`}
+              whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
+              transition={{ duration: 0.3 }}
               onClick={isPRDAvailable ? handleGeneratePRD : undefined}
               role={isPRDAvailable ? "button" : undefined}
               aria-disabled={!isPRDAvailable}
               tabIndex={isPRDAvailable ? 0 : -1}
               data-testid="prd-button"
             >
-              <div className={`p-3 ${isPRDAvailable ? 'bg-yellow-100' : 'bg-gray-200'} rounded-xl mr-4`}>
-                <FileText className={`w-6 h-6 ${isPRDAvailable ? 'text-yellow-600' : 'text-gray-400'}`} />
+              <div className="p-3 bg-yellow-100 rounded-xl mr-4">
+                <FileText className="w-6 h-6 text-yellow-600" />
               </div>
               <div>
-                <h3 className={`font-medium text-sm ${isPRDAvailable ? '' : 'text-gray-400'}`}>PRD Generation</h3>
-                <p className={`text-xs ${isPRDAvailable ? 'text-yellow-700' : 'text-gray-400'} mt-1`}>
+                <h3 className="font-medium text-sm">PRD Generation</h3>
+                <p className="text-xs text-yellow-700 mt-1">
                   {isPRDAvailable ? 'Click to generate requirements document' : 'Answer more questions to unlock'}
                 </p>
               </div>
