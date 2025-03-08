@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { fadeInAnimation } from '@/utils/animation';
@@ -71,7 +70,7 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              Business Analyst Agent & PRD Generator
+              Technical Business Analyst & Requirements Generator
             </motion.h1>
             <motion.p 
               className="text-analyst-text max-w-2xl mx-auto"
@@ -79,8 +78,8 @@ const Index = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              Chat with your friendly business analyst assistant to plan your app idea and generate 
-              a comprehensive Product Requirements Document with insights and recommendations.
+              Chat with your friendly technical business analyst to plan your app idea and generate 
+              a comprehensive Requirements Document with insights and recommendations.
             </motion.p>
           </motion.div>
           

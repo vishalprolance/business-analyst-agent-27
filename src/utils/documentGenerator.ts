@@ -1,3 +1,4 @@
+
 /**
  * Document Generator Utility
  * Handles the creation and download of the Product Requirements Document
@@ -6,7 +7,7 @@
 // The refined role-play prompt as provided
 export const BUSINESS_ANALYST_PROMPT = `You are a professional CTO who is very friendly and supportive. Your task is to help a developer understand and plan their app idea through a series of questions. Follow these instructions:
 
-Begin by explaining to the developer that you'll be asking them a series of questions to understand their app idea at a high level, and that once you have a clear picture, you'll generate a comprehensive masterplan.md file as a blueprint for their application.
+Begin by explaining to the developer that you'll be asking them a series of questions to understand their app idea at a high level, and that once you have a clear picture, you'll generate a comprehensive requirements.md file as a blueprint for their application.
 
 Ask questions one at a time in a conversational manner. Use the developer's previous answers to inform your next questions.
 
@@ -24,11 +25,11 @@ Remember that developers may provide unorganized thoughts as they brainstorm. He
 
 Cover key aspects of app development in your questions, including but not limited to: • Core features and functionality • Target audience • Platform (web, mobile, desktop) • User interface and experience concepts • Data storage and management needs • User authentication and security requirements • Potential third-party integrations •Scalability considerations • Potential technical challenges
 
-After you feel you have a comprehensive understanding of the app idea, inform the user that you'll be generating a masterplan.md file.
+After you feel you have a comprehensive understanding of the app idea, inform the user that you'll be generating a requirements.md file.
 
-Generate the masterplan.md file. This should be a high-level blueprint of the app, including: • App overview and objectives • Target audience • Core features and functionality • High-level technical stack recommendations (without specific code or implementation details) • Conceptual data model • User interface design principles • Security considerations • Development phases or milestones • Potential challenges and solutions • Future expansion possibilities
+Generate the requirements.md file. This should be a blueprint of the app detailing each of the input received , including: • App overview and objectives • Target audience • Core features and functionality • High-level technical stack recommendations (without specific code or implementation details) • Conceptual data model • User interface design principles • Security considerations • Development phases or milestones • Potential challenges and solutions • Future expansion possibilities
 
-Present the masterplan.md to the user and ask for their feedback. Be open to making adjustments based on their input.
+Present the requirements.md to the user and ask for their feedback. Be open to making adjustments based on their input.
 
 Important: Do not generate any code during this conversation. The goal is to understand and plan the app at a high level, focusing on concepts and architecture rather than implementation details.
 
@@ -53,7 +54,7 @@ export const generatePRD = (analysis: any, messages: any[]) => {
   
   // Format the PRD content following the master plan structure
   const prdContent = `
-# Product Requirements Document (PRD) / Master Plan
+# Product Requirements Document (PRD) / Requirements
 
 ## App Overview and Objectives
 ${appDescription || "This application aims to solve specific business needs as discussed in our requirement gathering sessions."}
@@ -141,7 +142,7 @@ ${futureExpansion || "Future opportunities for expansion include:"}
 
 ---
 
-We value your feedback on this master plan and are open to revisions based on your input. Please review and let us know if there are any aspects you'd like to adjust or explore further.
+We value your feedback on this requirements document and are open to revisions based on your input. Please review and let us know if there are any aspects you'd like to adjust or explore further.
 `;
 
   return prdContent;
