@@ -20,6 +20,12 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialValue }) 
     }
   }, [initialValue]);
 
+  // Enhanced validation for OpenAI API key
+  const isValidOpenAIKey = (key: string): boolean => {
+    // OpenAI API keys follow this format: sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    return /^sk-[a-zA-Z0-9]{32,}$/.test(key.trim());
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -32,11 +38,11 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialValue }) 
       return;
     }
     
-    // Basic format validation
-    if (!apiKey.startsWith('sk-') || apiKey.length < 20) {
+    // Enhanced validation
+    if (!isValidOpenAIKey(apiKey)) {
       toast({
         title: "Invalid API Key",
-        description: "Please enter a valid OpenAI API key (should start with 'sk-')",
+        description: "Please enter a valid OpenAI API key (should start with 'sk-' followed by at least 32 characters)",
         variant: "destructive",
       });
       return;
@@ -81,9 +87,14 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialValue }) 
           Save
         </button>
       </form>
-      <p className="text-xs text-analyst-text mt-1 opacity-75">
-        Your API key is stored locally and never sent to our servers.
-      </p>
+      <div className="text-xs text-analyst-text mt-1 opacity-75 space-y-1">
+        <p>
+          <strong>Note:</strong> Only OpenAI API keys are accepted (starting with 'sk-').
+        </p>
+        <p>
+          Your API key is stored locally and never sent to our servers.
+        </p>
+      </div>
     </motion.div>
   );
 };
