@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Settings } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Button } from "@/components/ui/button";
 
 interface ChatHeaderProps {
@@ -42,10 +41,11 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
           API Key
         </Button>
         
-        {/* Hidden button that will be clicked programmatically - important for PRD generation */}
+        {/* This button should be accessible for programmatic clicking */}
         <button 
           id="generate-prd-trigger" 
           className="hidden"
+          type="button"
           aria-hidden="true"
           data-testid="hidden-prd-trigger"
         ></button>

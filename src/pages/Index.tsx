@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { fadeInAnimation } from '@/utils/animation';
 import Header from '@/components/Header';
@@ -33,6 +32,9 @@ const Index = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
   const [isPRDAvailable, setIsPRDAvailable] = useState(false);
+  
+  // Add a ref for the PRD trigger button
+  const prdTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   const handleAnalysisComplete = (newAnalysis: Analysis) => {
     setAnalysis(newAnalysis);
@@ -59,7 +61,7 @@ const Index = () => {
     setChatMessages(messages);
   };
 
-  // Handler for Master Planning button click
+  // Handler for Master Planning button click - updated for better debugging
   const handleGenerateRoadmap = () => {
     console.log("handleGenerateRoadmap called, isPRDAvailable:", isPRDAvailable);
     
@@ -98,7 +100,7 @@ const Index = () => {
     }
   };
 
-  // Handler to trigger PRD generation in the ChatInterface
+  // Updated handler to trigger PRD generation in the ChatInterface
   const handleGeneratePRD = () => {
     console.log("handleGeneratePRD called, isPRDAvailable:", isPRDAvailable);
     
@@ -111,21 +113,53 @@ const Index = () => {
       return;
     }
     
-    // Find the ChatInterface's PRD generation trigger element and click it
+    // Find the PRD trigger button and click it
     const prdButton = document.getElementById('generate-prd-trigger');
+    console.log("PRD button found:", prdButton);
+    
     if (prdButton) {
-      console.log("Found PRD button, clicking it...");
+      console.log("Clicking PRD button...");
       prdButton.click();
     } else {
-      console.error("PRD button not found");
-      toast({
-        title: "Error",
-        description: "PRD generation button not found. Please try again.",
-        variant: "destructive",
-        duration: 3000,
-      });
+      console.error("PRD button not found - trying to manually trigger event");
+      
+      // Fallback: Create and dispatch a click event
+      try {
+        const clickEvent = new MouseEvent('click', {
+          view: window,
+          bubbles: true,
+          cancelable: true
+        });
+        
+        // Try to find the button again using querySelector
+        const altButton = document.querySelector('[data-testid="hidden-prd-trigger"]');
+        
+        if (altButton) {
+          console.log("Found button via querySelector, clicking it");
+          altButton.dispatchEvent(clickEvent);
+        } else {
+          console.error("Still couldn't find the PRD button using alternative methods");
+          toast({
+            title: "Error",
+            description: "PRD generation button not found. Please try refreshing the page.",
+            variant: "destructive",
+            duration: 3000,
+          });
+        }
+      } catch (error) {
+        console.error("Error dispatching click event:", error);
+      }
     }
   };
+
+  // Store a reference to the PRD trigger button after component mounts
+  useEffect(() => {
+    // Wait for the DOM to be ready
+    setTimeout(() => {
+      prdTriggerRef.current = document.getElementById('generate-prd-trigger') as HTMLButtonElement;
+      console.log("PRD trigger button reference stored:", prdTriggerRef.current);
+    }, 500);
+  }, []);
 
   // Use effect to log when isPRDAvailable changes
   useEffect(() => {

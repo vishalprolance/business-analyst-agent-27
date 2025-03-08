@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
@@ -265,35 +266,46 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   useEffect(() => {
     console.log("Setting up PRD trigger event listener");
     
-    // Get the button element
-    const prdTriggerButton = document.getElementById('generate-prd-trigger');
-    
-    if (!prdTriggerButton) {
-      console.error("PRD trigger button not found in DOM");
-      return;
-    }
-    
-    console.log("Found PRD trigger button:", prdTriggerButton);
-    
-    // Store button in ref for cleanup
-    prdButtonRef.current = prdTriggerButton as HTMLButtonElement;
-    
-    // Define the handler function
-    const handlePRDTriggerClick = () => {
-      console.log("PRD trigger button clicked!");
-      handleGeneratePRD();
-    };
-    
-    // Add the event listener
-    prdTriggerButton.addEventListener('click', handlePRDTriggerClick);
-    
-    // Cleanup function
-    return () => {
+    // Cleanup function to prevent memory leaks
+    const cleanupListener = () => {
       console.log("Cleaning up PRD trigger event listener");
       if (prdButtonRef.current) {
         prdButtonRef.current.removeEventListener('click', handlePRDTriggerClick);
       }
     };
+    
+    // Define the handler function
+    const handlePRDTriggerClick = () => {
+      console.log("PRD trigger button clicked from event listener!");
+      handleGeneratePRD();
+    };
+    
+    // Wait for the DOM to fully render
+    setTimeout(() => {
+      // Get the button element
+      const prdTriggerButton = document.getElementById('generate-prd-trigger');
+      
+      if (!prdTriggerButton) {
+        console.error("PRD trigger button not found in DOM after timeout");
+        return cleanupListener;
+      }
+      
+      console.log("Found PRD trigger button after timeout:", prdTriggerButton);
+      
+      // Store button in ref for cleanup
+      prdButtonRef.current = prdTriggerButton as HTMLButtonElement;
+      
+      // Remove any existing listeners to prevent duplicates
+      prdButtonRef.current.removeEventListener('click', handlePRDTriggerClick);
+      
+      // Add the event listener
+      prdButtonRef.current.addEventListener('click', handlePRDTriggerClick);
+      
+      console.log("Successfully added event listener to PRD trigger button");
+    }, 1000);
+    
+    // Return cleanup function
+    return cleanupListener;
   }, [analysis, messages]); // Re-run when analysis or messages change
 
   const handlePRDConfirmation = (updatedContent: string) => {
