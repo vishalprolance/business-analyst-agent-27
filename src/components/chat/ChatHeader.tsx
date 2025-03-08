@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Settings, TestTube } from 'lucide-react';
+import { Settings, FileText } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 interface ChatHeaderProps {
@@ -28,11 +28,6 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
       </div>
       
       <div className="flex items-center space-x-2">
-        <div className="flex items-center space-x-2 mr-2">
-          <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-          <span className="text-sm text-analyst-text">Online</span>
-        </div>
-        
         {onTestPRDTrigger && (
           <Button 
             variant="outline" 
@@ -40,8 +35,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             onClick={onTestPRDTrigger}
             className="h-8 bg-amber-100 hover:bg-amber-200 text-amber-700 border-amber-300"
           >
-            <TestTube className="h-3.5 w-3.5 mr-1" />
-            Test PRD Trigger
+            <FileText className="h-3.5 w-3.5 mr-1" />
+            Generate Requirements
           </Button>
         )}
         

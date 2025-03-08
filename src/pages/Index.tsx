@@ -5,7 +5,7 @@ import Header from '@/components/Header';
 import ChatInterface from '@/components/ChatInterface';
 import ChatHistory from '@/components/chat/ChatHistory';
 import AnalysisDisplay from '@/components/AnalysisDisplay';
-import { BarChart2, TrendingUp, Zap, FileText, TestTube } from 'lucide-react';
+import { BarChart2, TrendingUp, Zap, FileText } from 'lucide-react';
 import { Toaster } from "@/components/ui/toaster";
 import { Message } from '@/components/ChatInterface';
 import { toast } from "@/components/ui/use-toast";
@@ -62,7 +62,7 @@ const Index = () => {
     setChatMessages(messages);
   };
 
-  // Handler for Master Planning button click - updated for better debugging
+  // Handler for Master Planning button click
   const handleGenerateRoadmap = () => {
     console.log("handleGenerateRoadmap called, isPRDAvailable:", isPRDAvailable);
     
@@ -202,41 +202,6 @@ const Index = () => {
               a comprehensive Requirements Document with insights and recommendations.
             </motion.p>
           </motion.div>
-          
-          {/* Test Buttons Area */}
-          <div className="flex justify-center mb-6 gap-4">
-            <Button 
-              onClick={handleGenerateRoadmap}
-              className="bg-green-500 hover:bg-green-600"
-              disabled={!isPRDAvailable}
-            >
-              <TestTube className="mr-2 h-4 w-4" />
-              Test Master Planning
-            </Button>
-            
-            <Button 
-              onClick={() => {
-                console.log("Clicking PRD button directly");
-                const prdButton = document.getElementById('generate-prd-trigger');
-                if (prdButton) {
-                  console.log("Found PRD button, clicking it");
-                  prdButton.click();
-                } else {
-                  console.error("PRD button not found");
-                  toast({
-                    title: "Testing Error",
-                    description: "PRD button element not found",
-                    variant: "destructive"
-                  });
-                }
-              }}
-              className="bg-amber-500 hover:bg-amber-600"
-              disabled={!isPRDAvailable}
-            >
-              <TestTube className="mr-2 h-4 w-4" />
-              Test PRD Generation
-            </Button>
-          </div>
           
           <motion.div 
             className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
