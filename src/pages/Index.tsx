@@ -1,16 +1,15 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
 import { fadeInAnimation } from '@/utils/animation';
 import Header from '@/components/Header';
-import ChatInterface from '@/components/ChatInterface';
-import ChatHistory from '@/components/chat/ChatHistory';
-import AnalysisDisplay from '@/components/AnalysisDisplay';
-import { BarChart2, TrendingUp, FileText, Zap } from 'lucide-react';
 import { Toaster } from "@/components/ui/toaster";
 import { Message } from '@/components/ChatInterface';
 import { toast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 import { generateDetailedRoadmap, generateMarkdownBlob, downloadDocument } from '@/utils/documentGenerator';
+import HeaderSection from '@/components/sections/HeaderSection';
+import FeatureBoxes from '@/components/features/FeatureBoxes';
+import MainContent from '@/components/sections/MainContent';
+import FooterSection from '@/components/sections/FooterSection';
 
 interface Analysis {
   metrics: {
@@ -176,142 +175,25 @@ const Index = () => {
         />
         
         <main className="mt-8">
-          <motion.div 
-            className="text-center mb-12"
-            variants={fadeInAnimation}
-            initial="initial"
-            animate="animate"
-          >
-            <motion.h1 
-              className="text-3xl md:text-4xl font-bold mb-3"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              Technical Business Analyst & Requirements Generator
-            </motion.h1>
-            <motion.p 
-              className="text-analyst-text max-w-2xl mx-auto"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-            >
-              Chat with your friendly technical business analyst to plan your app idea and generate 
-              a comprehensive Product Requirements Document with insights and recommendations.
-            </motion.p>
-          </motion.div>
+          <HeaderSection />
           
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            {/* Requirement Analysis Box */}
-            <motion.div 
-              className="flex items-center bg-[#D3E4FD] p-5 rounded-lg border border-blue-200 shadow-sm hover:shadow-md transition-all duration-300"
-              whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="p-3 bg-blue-100 rounded-xl mr-4">
-                <BarChart2 className="w-6 h-6 text-blue-500" />
-              </div>
-              <div>
-                <h3 className="font-medium text-sm">Requirement Analysis</h3>
-                <p className="text-xs text-analyst-text mt-1">Structured information gathering</p>
-              </div>
-            </motion.div>
-            
-            {/* Master Planning Box */}
-            <motion.div 
-              className={`flex items-center ${isPRDAvailable ? 'bg-[#F2FCE2]' : 'bg-[#F2FCE2] bg-opacity-70'} p-5 rounded-lg border border-green-200 shadow-sm hover:shadow-md transition-all duration-300 ${isPRDAvailable ? 'cursor-pointer' : ''}`}
-              whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
-              transition={{ duration: 0.3 }}
-              onClick={isPRDAvailable ? handleGenerateRoadmap : undefined}
-              role={isPRDAvailable ? "button" : undefined}
-              aria-disabled={!isPRDAvailable}
-              tabIndex={isPRDAvailable ? 0 : -1}
-              data-testid="master-planning-button"
-            >
-              <div className="p-3 bg-green-100 rounded-xl mr-4">
-                <TrendingUp className="w-6 h-6 text-green-500" />
-              </div>
-              <div>
-                <h3 className="font-medium text-sm">Master Planning</h3>
-                <p className="text-xs text-green-700 mt-1">
-                  {isPRDAvailable ? 'Click to generate development roadmap' : 'Answer more questions to unlock'}
-                </p>
-              </div>
-            </motion.div>
-            
-            {/* PRD Generation Box */}
-            <motion.div 
-              className={`flex items-center ${isPRDAvailable ? 'bg-[#FEF7CD]' : 'bg-[#FEF7CD] bg-opacity-70'} p-5 rounded-lg border border-yellow-200 shadow-sm hover:shadow-md transition-all duration-300 ${isPRDAvailable ? 'cursor-pointer' : ''}`}
-              whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
-              transition={{ duration: 0.3 }}
-              onClick={isPRDAvailable ? handleGeneratePRD : undefined}
-              role={isPRDAvailable ? "button" : undefined}
-              aria-disabled={!isPRDAvailable}
-              tabIndex={isPRDAvailable ? 0 : -1}
-              data-testid="prd-button"
-            >
-              <div className="p-3 bg-yellow-100 rounded-xl mr-4">
-                <FileText className="w-6 h-6 text-yellow-600" />
-              </div>
-              <div>
-                <h3 className="font-medium text-sm">PRD Generation</h3>
-                <p className="text-xs text-yellow-700 mt-1">
-                  {isPRDAvailable ? 'Click to generate requirements document' : 'Answer more questions to unlock'}
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
+          <FeatureBoxes 
+            isPRDAvailable={isPRDAvailable}
+            onGenerateRoadmap={handleGenerateRoadmap}
+            onGeneratePRD={handleGeneratePRD}
+          />
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="relative">
-              <ChatInterface 
-                onAnalysisComplete={handleAnalysisComplete} 
-                resetTrigger={resetTrigger}
-                onMessagesUpdate={handleMessagesUpdate}
-              />
-              <ChatHistory
-                messages={chatMessages}
-                isOpen={showHistory}
-                onClose={toggleHistory}
-              />
-            </div>
-            
-            <div className="flex flex-col justify-center">
-              {analysis ? (
-                <AnalysisDisplay analysis={analysis} />
-              ) : (
-                <motion.div 
-                  className="text-center p-10 rounded-lg border border-dashed border-analyst-border bg-white bg-opacity-50"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                >
-                  <div className="w-16 h-16 mx-auto mb-6 bg-analyst-light rounded-full flex items-center justify-center">
-                    <Zap className="w-8 h-8 text-analyst-accent" />
-                  </div>
-                  <h3 className="text-lg font-medium mb-2">Start a conversation</h3>
-                  <p className="text-analyst-text text-sm max-w-md mx-auto">
-                    Tell your business analyst about your app idea. Share your vision and requirements
-                    to generate a comprehensive Product Requirements Document with actionable insights.
-                  </p>
-                </motion.div>
-              )}
-            </div>
-          </div>
+          <MainContent 
+            analysis={analysis}
+            resetTrigger={resetTrigger}
+            showHistory={showHistory}
+            chatMessages={chatMessages}
+            onAnalysisComplete={handleAnalysisComplete}
+            onMessagesUpdate={handleMessagesUpdate}
+            toggleHistory={toggleHistory}
+          />
           
-          <motion.div 
-            className="mt-16 text-center text-sm text-analyst-text"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            Powered by advanced product planning algorithms • Updated in real-time
-          </motion.div>
+          <FooterSection />
         </main>
       </div>
       <Toaster />
