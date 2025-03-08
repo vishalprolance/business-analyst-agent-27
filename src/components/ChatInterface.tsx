@@ -23,11 +23,6 @@ export interface Message {
   content: string;
   sender: 'user' | 'agent';
   timestamp: Date;
-  attachment?: {
-    name: string;
-    type: string;
-    content?: string;
-  };
 }
 
 interface Category {
@@ -67,8 +62,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [showPRDPreview, setShowPRDPreview] = useState(false);
   const [prdContent, setPrdContent] = useState('');
   const { toast } = useToast();
-  const [fileContent, setFileContent] = useState<string | null>(null);
-  const [currentAttachment, setCurrentAttachment] = useState<File | null>(null);
   
   // Use a ref for the PRD button to ensure consistent access across renders
   const prdButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -189,42 +182,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   };
 
-  const handleFileUpload = (file: File) => {
-    setCurrentAttachment(file);
-    
-    // You could also extract text from the Word document here
-    // using a library like mammoth.js if needed
-    console.log(`File attached: ${file.name} (${file.type})`);
-    
-    toast({
-      title: "Document Attached",
-      description: `The document ${file.name} is ready to be analyzed`,
-    });
-  };
-
   const handleSendMessage = async (input: string) => {
     if (!input.trim()) return;
     
     console.log("handleSendMessage called with:", input);
     
-    // Add user message with unique ID and attachment if present
+    // Add user message with unique ID
     const userMessage: Message = {
       id: `user-${Date.now().toString()}`,
       content: input,
       sender: 'user',
       timestamp: new Date()
     };
-    
-    // If we have an attachment, add it to the message
-    if (currentAttachment) {
-      userMessage.attachment = {
-        name: currentAttachment.name,
-        type: currentAttachment.type
-      };
-      
-      // Clear the current attachment
-      setCurrentAttachment(null);
-    }
     
     console.log("Adding user message:", JSON.stringify(userMessage));
     
@@ -429,7 +398,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       <ChatInput 
         onSendMessage={handleSendMessage} 
-        onFileUpload={handleFileUpload}
       />
       
       {showPRDPreview && (

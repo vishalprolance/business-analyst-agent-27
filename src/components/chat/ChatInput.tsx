@@ -1,20 +1,17 @@
 
 import React, { useState, useRef } from 'react';
-import { Send, Mic, FileUp, StopCircle, Paperclip } from 'lucide-react';
+import { Send, Mic, StopCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
-  onFileUpload?: (file: File) => void;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onFileUpload }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
   const [input, setInput] = useState('');
   const [isRecording, setIsRecording] = useState(false);
-  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
@@ -26,7 +23,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onFileUpload }) =>
     console.log("Sending message from input:", trimmedInput);
     onSendMessage(trimmedInput);
     setInput('');
-    setUploadedFileName(null);
   };
 
   // Handle key press
@@ -35,33 +31,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onFileUpload }) =>
       e.preventDefault();
       handleSend();
     }
-  };
-
-  // Handle file upload
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Check if file is a Word document
-    if (!file.name.endsWith('.doc') && !file.name.endsWith('.docx')) {
-      toast({
-        title: "Invalid file format",
-        description: "Please upload a Microsoft Word document (.doc or .docx)",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setUploadedFileName(file.name);
-    
-    if (onFileUpload) {
-      onFileUpload(file);
-    }
-
-    toast({
-      title: "File uploaded",
-      description: `${file.name} has been attached to your message`,
-    });
   };
 
   // Voice command handling
@@ -145,36 +114,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onFileUpload }) =>
     }
   };
 
-  // Trigger file input click
-  const handleAttachClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
   return (
     <div className="p-4 border-t border-analyst-border flex items-center space-x-2 z-10 bg-white bg-opacity-90">
-      {/* File upload input (hidden) */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        accept=".doc,.docx"
-        onChange={handleFileUpload}
-        aria-label="Upload document"
-      />
-      
-      {/* File attachment button */}
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="rounded-full h-9 w-9 text-analyst-text hover:text-analyst-accent"
-        onClick={handleAttachClick}
-        aria-label="Attach document"
-      >
-        <Paperclip size={18} />
-      </Button>
-      
       {/* Voice command button */}
       <Button 
         variant="ghost" 
@@ -198,14 +139,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, onFileUpload }) =>
           aria-label="Message input"
           data-testid="chat-input"
         />
-        
-        {/* Show file name if uploaded */}
-        {uploadedFileName && (
-          <div className="absolute -top-8 left-0 bg-blue-50 text-analyst-accent p-1 px-3 rounded-full text-xs flex items-center">
-            <FileUp size={12} className="mr-1" />
-            {uploadedFileName}
-          </div>
-        )}
       </div>
       
       {/* Send button */}
