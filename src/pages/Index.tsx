@@ -6,10 +6,9 @@ import Header from '@/components/Header';
 import ChatInterface from '@/components/ChatInterface';
 import ChatHistory from '@/components/chat/ChatHistory';
 import AnalysisDisplay from '@/components/AnalysisDisplay';
-import { BarChart2, BrainCircuit, TrendingUp, Zap, FileText } from 'lucide-react';
+import { BarChart2, TrendingUp, Zap, FileText } from 'lucide-react';
 import { Toaster } from "@/components/ui/toaster";
 import { Message } from '@/components/ChatInterface';
-import { Button } from "@/components/ui/button";
 
 interface Analysis {
   metrics: {
@@ -86,7 +85,7 @@ const Index = () => {
           </motion.div>
           
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -102,20 +101,6 @@ const Index = () => {
               <div>
                 <h3 className="font-medium text-sm">Requirement Analysis</h3>
                 <p className="text-xs text-analyst-text mt-1">Structured information gathering</p>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              className="flex items-center bg-white p-5 rounded-lg border border-analyst-border"
-              whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
-              transition={{ duration: 0.3, delay: 0.05 }}
-            >
-              <div className="p-3 bg-purple-50 rounded-xl mr-4">
-                <BrainCircuit className="w-6 h-6 text-purple-500" />
-              </div>
-              <div>
-                <h3 className="font-medium text-sm">CTO-Level Advice</h3>
-                <p className="text-xs text-analyst-text mt-1">Professional guidance</p>
               </div>
             </motion.div>
             
