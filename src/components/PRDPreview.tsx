@@ -13,7 +13,50 @@ interface PRDPreviewProps {
 }
 
 const PRDPreview: React.FC<PRDPreviewProps> = ({ content, onConfirm, onCancel }) => {
+  // Store the edited content in state
   const [editedContent, setEditedContent] = useState(content);
+
+  // Handle confirmation and pass the edited content back
+  const handleConfirm = () => {
+    // Ensure content is properly formatted and doesn't have duplicate sections
+    const cleanedContent = removeDuplicateSections(editedContent);
+    onConfirm(cleanedContent);
+  };
+
+  // Function to identify and remove duplicate sections in the content
+  const removeDuplicateSections = (text: string): string => {
+    // Split content by markdown headings (## Section Title)
+    const sections = text.split(/^##\s+/m);
+    
+    // Track section titles we've seen
+    const seenSections = new Set<string>();
+    const cleanedSections: string[] = [];
+    
+    // Process each section
+    sections.forEach((section, index) => {
+      // Skip empty sections
+      if (!section.trim()) return;
+      
+      // For the first item (intro content), just add it
+      if (index === 0) {
+        cleanedSections.push(section);
+        return;
+      }
+      
+      // Get section title (first line)
+      const lines = section.split('\n');
+      const title = lines[0].trim();
+      
+      // If we haven't seen this section title, add it
+      if (!seenSections.has(title)) {
+        seenSections.add(title);
+        cleanedSections.push('## ' + section);
+      }
+    });
+    
+    // Join everything back together
+    return cleanedSections.join('\n');
+  };
 
   return (
     <motion.div 
@@ -50,7 +93,7 @@ const PRDPreview: React.FC<PRDPreviewProps> = ({ content, onConfirm, onCancel })
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={onCancel}>Cancel</Button>
-            <Button onClick={() => onConfirm(editedContent)}>Generate Files</Button>
+            <Button onClick={handleConfirm}>Generate Files</Button>
           </div>
         </div>
       </div>
