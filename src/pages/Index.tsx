@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { fadeInAnimation } from '@/utils/animation';
@@ -63,7 +62,6 @@ const Index = () => {
     setChatMessages(messages);
   };
 
-  // Handler for Master Planning button click
   const handleGenerateRoadmap = () => {
     console.log("handleGenerateRoadmap called, isPRDAvailable:", isPRDAvailable);
     
@@ -102,7 +100,6 @@ const Index = () => {
     }
   };
 
-  // Updated handler to trigger PRD generation in the ChatInterface
   const handleGeneratePRD = () => {
     console.log("handleGeneratePRD called, isPRDAvailable:", isPRDAvailable);
     
@@ -200,7 +197,7 @@ const Index = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               Chat with your friendly technical business analyst to plan your app idea and generate 
-              a comprehensive Requirements Document with insights and recommendations.
+              a comprehensive Product Requirements Document with insights and recommendations.
             </motion.p>
           </motion.div>
           
@@ -210,13 +207,14 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
+            {/* Requirement Analysis Box */}
             <motion.div 
-              className="flex items-center bg-white p-5 rounded-lg border border-analyst-border"
+              className="flex items-center bg-[#D3E4FD] p-5 rounded-lg border border-blue-200 shadow-sm"
               whileHover={{ y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' }}
               transition={{ duration: 0.3 }}
             >
-              <div className="p-3 bg-blue-50 rounded-xl mr-4">
-                <BarChart2 className="w-6 h-6 text-analyst-accent" />
+              <div className="p-3 bg-blue-100 rounded-xl mr-4">
+                <BarChart2 className="w-6 h-6 text-blue-500" />
               </div>
               <div>
                 <h3 className="font-medium text-sm">Requirement Analysis</h3>
@@ -224,8 +222,9 @@ const Index = () => {
               </div>
             </motion.div>
             
+            {/* Master Planning Box */}
             <motion.div 
-              className={`flex items-center bg-white p-5 rounded-lg border ${isPRDAvailable ? 'border-blue-500 cursor-pointer' : 'border-analyst-border'}`}
+              className={`flex items-center ${isPRDAvailable ? 'bg-[#F2FCE2] cursor-pointer' : 'bg-gray-100'} p-5 rounded-lg border ${isPRDAvailable ? 'border-green-200 shadow-sm' : 'border-gray-200'}`}
               whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.1 }}
               onClick={isPRDAvailable ? handleGenerateRoadmap : undefined}
@@ -234,19 +233,20 @@ const Index = () => {
               tabIndex={isPRDAvailable ? 0 : -1}
               data-testid="master-planning-button"
             >
-              <div className={`p-3 ${isPRDAvailable ? 'bg-blue-50' : 'bg-gray-50'} rounded-xl mr-4`}>
-                <TrendingUp className={`w-6 h-6 ${isPRDAvailable ? 'text-analyst-accent' : 'text-gray-400'}`} />
+              <div className={`p-3 ${isPRDAvailable ? 'bg-green-100' : 'bg-gray-200'} rounded-xl mr-4`}>
+                <TrendingUp className={`w-6 h-6 ${isPRDAvailable ? 'text-green-500' : 'text-gray-400'}`} />
               </div>
               <div>
                 <h3 className={`font-medium text-sm ${isPRDAvailable ? '' : 'text-gray-400'}`}>Master Planning</h3>
-                <p className={`text-xs ${isPRDAvailable ? 'text-analyst-text' : 'text-gray-400'} mt-1`}>
+                <p className={`text-xs ${isPRDAvailable ? 'text-green-700' : 'text-gray-400'} mt-1`}>
                   {isPRDAvailable ? 'Click to generate development roadmap' : 'Answer more questions to unlock'}
                 </p>
               </div>
             </motion.div>
             
+            {/* PRD Generation Box */}
             <motion.div 
-              className={`flex items-center bg-white p-5 rounded-lg border ${isPRDAvailable ? 'border-blue-500 cursor-pointer' : 'border-analyst-border'}`}
+              className={`flex items-center ${isPRDAvailable ? 'bg-[#FEF7CD] cursor-pointer' : 'bg-gray-100'} p-5 rounded-lg border ${isPRDAvailable ? 'border-yellow-200 shadow-sm' : 'border-gray-200'}`}
               whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.15 }}
               onClick={isPRDAvailable ? handleGeneratePRD : undefined}
@@ -255,12 +255,12 @@ const Index = () => {
               tabIndex={isPRDAvailable ? 0 : -1}
               data-testid="prd-button"
             >
-              <div className={`p-3 ${isPRDAvailable ? 'bg-blue-50' : 'bg-gray-50'} rounded-xl mr-4`}>
-                <FileText className={`w-6 h-6 ${isPRDAvailable ? 'text-analyst-accent' : 'text-gray-400'}`} />
+              <div className={`p-3 ${isPRDAvailable ? 'bg-yellow-100' : 'bg-gray-200'} rounded-xl mr-4`}>
+                <FileText className={`w-6 h-6 ${isPRDAvailable ? 'text-yellow-600' : 'text-gray-400'}`} />
               </div>
               <div>
                 <h3 className={`font-medium text-sm ${isPRDAvailable ? '' : 'text-gray-400'}`}>PRD Generation</h3>
-                <p className={`text-xs ${isPRDAvailable ? 'text-analyst-text' : 'text-gray-400'} mt-1`}>
+                <p className={`text-xs ${isPRDAvailable ? 'text-yellow-700' : 'text-gray-400'} mt-1`}>
                   {isPRDAvailable ? 'Click to generate requirements document' : 'Answer more questions to unlock'}
                 </p>
               </div>
