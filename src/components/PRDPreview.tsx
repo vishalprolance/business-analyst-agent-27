@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { X } from 'lucide-react';
 
 interface PRDPreviewProps {
   content: string;
@@ -22,7 +23,12 @@ const PRDPreview: React.FC<PRDPreviewProps> = ({ content, onConfirm, onCancel })
       animate="animate"
     >
       <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] flex flex-col">
-        <h2 className="text-2xl font-bold mb-4 text-analyst-accent">Product Requirements Document Preview</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold text-analyst-accent">Product Requirements Document Preview</h2>
+          <Button variant="ghost" size="icon" onClick={onCancel}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
         
         <p className="text-sm text-analyst-text mb-4">
           Please review and make any necessary changes to your document before generating the final files.

@@ -51,8 +51,9 @@ export const generatePRD = (analysis: any, messages: any[]) => {
   const challenges = extractChallenges(messages);
   const roadmap = extractRoadmap(messages);
   const futureExpansion = extractFutureExpansion(messages);
+  const uiux = extractUiUx(messages);
   
-  // Format the PRD content following the master plan structure
+  // Format the PRD content following the structure
   const prdContent = `
 # Product Requirements Document (PRD) / Requirements
 
@@ -73,18 +74,20 @@ ${coreFeatures || "The core functionality of the application includes the essent
 - Minimal viable interface for user interaction
 
 ### Future Enhancements
+${futureExpansion ? `${futureExpansion}` : `
 - Advanced analytics and reporting
 - Enhanced user experience elements
 - Integration with additional third-party services
-- Performance optimizations and scalability improvements
+- Performance optimizations and scalability improvements`}
 
-## High-Level Technical Stack Recommendations
-${technicalPreferences || "The recommended technical stack will depend on application requirements, but may include:"}
+## Technical Recommendations
+${technicalPreferences ? `${technicalPreferences}` : `
+The recommended technical stack will depend on application requirements, but may include:
 - Frontend: React with TypeScript for robust UI development
 - Styling: Tailwind CSS for rapid UI implementation
 - State Management: Context API or Redux depending on complexity
 - Backend: Node.js with Express or Next.js API routes
-- Database: SQL or NoSQL based on data structure requirements
+- Database: SQL or NoSQL based on data structure requirements`}
 
 ## Conceptual Data Model
 - User data: Profile information, preferences, authentication details
@@ -92,53 +95,58 @@ ${technicalPreferences || "The recommended technical stack will depend on applic
 - Transactional data: Records of user actions and system events
 - Configuration data: System settings and parameters
 
-## User Authentication and Security Considerations
-${securityConsiderations || "Security will be implemented with industry best practices, including:"}
+## User Interface & Experience (UI/UX)
+${uiux ? `${uiux}` : `
+- Clean, intuitive interface with focus on usability
+- Responsive design for all device sizes
+- Accessibility compliance (WCAG standards)
+- Consistent visual language throughout the application`}
+
+## User Authentication and Security
+${securityConsiderations ? `${securityConsiderations}` : `
+Security will be implemented with industry best practices, including:
 - Secure authentication with email/password or social login options
 - Role-based access control for different user types
 - Data encryption for sensitive information
-- Regular security audits and vulnerability testing
+- Regular security audits and vulnerability testing`}
 
-## Potential Third-Party Integrations
-${integrations || "Based on requirements, the following integrations may be considered:"}
+## Integrations
+${integrations ? `${integrations}` : `
+Based on requirements, the following integrations may be considered:
 - Payment processing (Stripe, PayPal)
 - Email services (SendGrid, Mailchimp)
 - Analytics (Google Analytics, Mixpanel)
-- Cloud storage (AWS S3, Google Cloud Storage)
+- Cloud storage (AWS S3, Google Cloud Storage)`}
 
-## Scalability and Growth Considerations
-${scalability || "The application architecture will be designed with scalability in mind:"}
+## Scalability Considerations
+${scalability ? `${scalability}` : `
+The application architecture will be designed with scalability in mind:
 - Horizontal scaling for handling increased user load
 - Caching strategies for improved performance
 - Database optimization for larger data volumes
-- CDN implementation for global content delivery
+- CDN implementation for global content delivery`}
 
-## Business Model and Monetization Strategy
+## Business Model
 ${businessModel || "The monetization strategy will align with market demand and user expectations."}
 
-## Potential Technical Challenges and Solutions
-${challenges || "Anticipated challenges include:"}
+## Technical Challenges and Solutions
+${challenges ? `${challenges}` : `
+Anticipated challenges include:
 - Real-time data synchronization: Will be addressed using WebSockets or similar technology
 - Mobile responsiveness: Solved with responsive design principles and thorough testing
 - Data migration: Handled through careful planning and incremental implementation
-- Performance optimization: Addressed through code splitting and lazy loading
+- Performance optimization: Addressed through code splitting and lazy loading`}
 
-## Development Roadmap and Milestones
-${roadmap || "The development process will follow these phases:"}
+## Development Roadmap
+${roadmap ? `${roadmap}` : `
+The development process will follow these phases:
 1. Research and Requirements Gathering (Completed)
 2. Design and Architecture (2-3 weeks)
 3. MVP Development (4-6 weeks)
 4. Testing and Quality Assurance (2 weeks)
 5. Beta Launch and Feedback Collection (2 weeks)
 6. Refinement and Official Launch (2 weeks)
-7. Post-Launch Monitoring and Updates (Ongoing)
-
-## Future Expansion Possibilities
-${futureExpansion || "Future opportunities for expansion include:"}
-- Additional platform support (mobile apps, desktop applications)
-- Geographic expansion to new markets
-- New feature sets based on user feedback and market trends
-- Enhanced AI/ML capabilities for personalization
+7. Post-Launch Monitoring and Updates (Ongoing)`}
 
 ---
 
@@ -527,6 +535,19 @@ const extractFutureExpansion = (messages: any[]) => {
     if (message.sender === 'user') {
       const content = message.content.toLowerCase();
       if (content.includes('future') || content.includes('expansion') || content.includes('next') || content.includes('grow') || content.includes('plan')) {
+        return message.content;
+      }
+    }
+  }
+  return null;
+};
+
+// New extraction function for UI/UX information
+const extractUiUx = (messages: any[]) => {
+  for (const message of messages) {
+    if (message.sender === 'user') {
+      const content = message.content.toLowerCase();
+      if (content.includes('ui') || content.includes('ux') || content.includes('interface') || content.includes('experience') || content.includes('design')) {
         return message.content;
       }
     }
