@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { fadeInAnimation } from '@/utils/animation';
@@ -224,7 +225,7 @@ const Index = () => {
             </motion.div>
             
             <motion.div 
-              className={`flex items-center bg-white p-5 rounded-lg border ${isPRDAvailable ? 'border-green-500 cursor-pointer' : 'border-analyst-border'}`}
+              className={`flex items-center bg-white p-5 rounded-lg border ${isPRDAvailable ? 'border-blue-500 cursor-pointer' : 'border-analyst-border'}`}
               whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.1 }}
               onClick={isPRDAvailable ? handleGenerateRoadmap : undefined}
@@ -233,8 +234,8 @@ const Index = () => {
               tabIndex={isPRDAvailable ? 0 : -1}
               data-testid="master-planning-button"
             >
-              <div className={`p-3 ${isPRDAvailable ? 'bg-green-50' : 'bg-gray-50'} rounded-xl mr-4`}>
-                <TrendingUp className={`w-6 h-6 ${isPRDAvailable ? 'text-green-500' : 'text-gray-400'}`} />
+              <div className={`p-3 ${isPRDAvailable ? 'bg-blue-50' : 'bg-gray-50'} rounded-xl mr-4`}>
+                <TrendingUp className={`w-6 h-6 ${isPRDAvailable ? 'text-analyst-accent' : 'text-gray-400'}`} />
               </div>
               <div>
                 <h3 className={`font-medium text-sm ${isPRDAvailable ? '' : 'text-gray-400'}`}>Master Planning</h3>
@@ -245,7 +246,7 @@ const Index = () => {
             </motion.div>
             
             <motion.div 
-              className={`flex items-center bg-white p-5 rounded-lg border ${isPRDAvailable ? 'border-amber-500 cursor-pointer' : 'border-analyst-border'}`}
+              className={`flex items-center bg-white p-5 rounded-lg border ${isPRDAvailable ? 'border-blue-500 cursor-pointer' : 'border-analyst-border'}`}
               whileHover={isPRDAvailable ? { y: -5, boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.05)' } : {}}
               transition={{ duration: 0.3, delay: 0.15 }}
               onClick={isPRDAvailable ? handleGeneratePRD : undefined}
@@ -254,8 +255,8 @@ const Index = () => {
               tabIndex={isPRDAvailable ? 0 : -1}
               data-testid="prd-button"
             >
-              <div className={`p-3 ${isPRDAvailable ? 'bg-amber-50' : 'bg-gray-50'} rounded-xl mr-4`}>
-                <FileText className={`w-6 h-6 ${isPRDAvailable ? 'text-amber-600' : 'text-gray-400'}`} />
+              <div className={`p-3 ${isPRDAvailable ? 'bg-blue-50' : 'bg-gray-50'} rounded-xl mr-4`}>
+                <FileText className={`w-6 h-6 ${isPRDAvailable ? 'text-analyst-accent' : 'text-gray-400'}`} />
               </div>
               <div>
                 <h3 className={`font-medium text-sm ${isPRDAvailable ? '' : 'text-gray-400'}`}>PRD Generation</h3>
