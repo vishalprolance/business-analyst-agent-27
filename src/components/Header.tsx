@@ -1,8 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { History } from 'lucide-react';
 import { fadeInAnimation } from '@/utils/animation';
+import ConfirmationDialog from './ConfirmationDialog';
+import { useToast } from '@/hooks/use-toast';
 
 interface HeaderProps {
   onNewAnalysis?: () => void;
@@ -10,6 +12,34 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onNewAnalysis, onHistoryClick }) => {
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const { toast } = useToast();
+
+  const handleNewAnalysisClick = () => {
+    setShowConfirmation(true);
+  };
+
+  const handleConfirm = () => {
+    // Close the dialog
+    setShowConfirmation(false);
+    
+    // Call the actual onNewAnalysis function
+    if (onNewAnalysis) {
+      onNewAnalysis();
+    }
+    
+    // Show toast notification
+    toast({
+      title: "Previous chat moved to history",
+      description: "You can access your previous conversation from the History button.",
+      duration: 3000,
+    });
+  };
+
+  const handleCancel = () => {
+    setShowConfirmation(false);
+  };
+
   return (
     <motion.header 
       className="w-full flex justify-between items-center py-6 px-6 sm:px-8 md:px-12 glass rounded-b-lg border-b border-analyst-border"
@@ -48,11 +78,20 @@ const Header: React.FC<HeaderProps> = ({ onNewAnalysis, onHistoryClick }) => {
         </button>
         <button 
           className="px-4 py-2 text-sm bg-analyst-accent text-white rounded-full hover:bg-blue-600 transition-colors duration-300"
-          onClick={onNewAnalysis}
+          onClick={handleNewAnalysisClick}
         >
           New Analysis
         </button>
       </motion.div>
+
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={showConfirmation}
+        onClose={handleCancel}
+        onConfirm={handleConfirm}
+        title="Start New Analysis"
+        message="Would you like to move your current chat to history and start a new analysis?"
+      />
     </motion.header>
   );
 };
