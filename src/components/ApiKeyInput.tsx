@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Key, X, Check, ChevronDown } from 'lucide-react';
@@ -60,7 +59,7 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
     setIsSaved(!!modelKey);
   };
 
-  // Validation for different API keys
+  // Update validation for different API keys
   const isValidApiKey = (key: string, provider: string): boolean => {
     key = key.trim();
     
@@ -77,6 +76,9 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
       case 'perplexity':
         // Perplexity API keys have a specific format
         return /^pplx-[a-zA-Z0-9]{32,}$/.test(key);
+      case 'mistral':
+        // Mistral API keys start with 'mist-'
+        return /^mist-[a-zA-Z0-9]{32,}$/.test(key);
       default:
         // Generic validation - at least 16 characters
         return key.length >= 16;
@@ -194,6 +196,7 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({
             {currentModel.provider === 'openai' && " (starts with 'sk-')"}
             {currentModel.provider === 'anthropic' && " (starts with 'sk-ant-')"}
             {currentModel.provider === 'perplexity' && " (starts with 'pplx-')"}
+            {currentModel.provider === 'mistral' && " (starts with 'mist-')"}
           </p>
           <p>
             Your API key is stored locally and never sent to our servers.

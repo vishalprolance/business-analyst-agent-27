@@ -1,4 +1,3 @@
-
 import { toast } from "@/hooks/use-toast";
 
 // Define types for OpenAI requests and responses
@@ -10,7 +9,7 @@ export interface OpenAIMessage {
 export interface LLMModel {
   id: string;
   name: string;
-  provider: 'openai' | 'anthropic' | 'perplexity';
+  provider: 'openai' | 'anthropic' | 'perplexity' | 'mistral';
   apiEndpoint: string;
   description: string;
 }
@@ -36,6 +35,20 @@ export const availableModels: LLMModel[] = [
     provider: 'anthropic',
     apiEndpoint: 'https://api.anthropic.com/v1/messages',
     description: 'Anthropic\'s most powerful model'
+  },
+  {
+    id: 'mistral-large',
+    name: 'Mistral Large (Mistral)',
+    provider: 'mistral',
+    apiEndpoint: 'https://api.mistral.ai/v1/chat/completions',
+    description: 'Mistral\'s large language model'
+  },
+  {
+    id: 'mistral-medium',
+    name: 'Mistral Medium (Mistral)',
+    provider: 'mistral',
+    apiEndpoint: 'https://api.mistral.ai/v1/chat/completions',
+    description: 'Balanced performance and efficiency'
   },
   {
     id: 'llama-3.1-sonar-small-128k-online',
@@ -220,6 +233,9 @@ export class OpenAIService {
         case 'perplexity':
           assistantMessage = await this.handlePerplexityRequest(apiKey);
           break;
+        case 'mistral':
+          assistantMessage = await this.handleMistralRequest(apiKey);
+          break;
         default:
           throw new Error(`Unsupported provider: ${provider}`);
       }
@@ -330,6 +346,39 @@ export class OpenAIService {
 
     const data: PerplexityCompletionResponse = await response.json();
     console.log("Successfully parsed Perplexity response");
+    
+    if (data.usage) {
+      console.log(`Token usage - Prompt: ${data.usage.prompt_tokens}, Completion: ${data.usage.completion_tokens}, Total: ${data.usage.total_tokens}`);
+    }
+    
+    return data.choices[0].message.content;
+  }
+
+  private async handleMistralRequest(apiKey: string): Promise<string> {
+    const requestBody: OpenAICompletionRequest = {
+      model: this.selectedModel.id,
+      messages: this.conversation,
+      temperature: 0.7,
+      max_tokens: 1000
+    };
+
+    const response = await fetch(this.selectedModel.apiEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    console.log("Received response:", response.status);
+
+    if (!response.ok) {
+      await this.handleErrorResponse(response);
+    }
+
+    const data: OpenAICompletionResponse = await response.json();
+    console.log("Successfully parsed Mistral response");
     
     if (data.usage) {
       console.log(`Token usage - Prompt: ${data.usage.prompt_tokens}, Completion: ${data.usage.completion_tokens}, Total: ${data.usage.total_tokens}`);
