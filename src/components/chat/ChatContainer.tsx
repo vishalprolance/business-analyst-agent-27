@@ -10,7 +10,7 @@ import ChatHeader from '@/components/chat/ChatHeader';
 import MessageList from '@/components/chat/MessageList';
 import ChatInput from '@/components/chat/ChatInput';
 import PRDManager from '@/components/chat/PRDManager';
-import AnalysisManager from '@/components/chat/AnalysisManager';
+import useAnalysisManager from '@/components/chat/AnalysisManager';
 import useMessageManager from '@/components/chat/MessageManager';
 import { Message } from '@/components/ChatInterface';
 
@@ -69,7 +69,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   }, [messages, onMessagesUpdate]);
   
   // Setup analysis manager
-  const { updateCategoriesBasedOnMessage } = AnalysisManager({
+  const { updateCategoriesBasedOnMessage } = useAnalysisManager({
     analysis,
     onAnalysisUpdate: (updatedAnalysis) => {
       setAnalysis(updatedAnalysis);

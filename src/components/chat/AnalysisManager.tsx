@@ -1,5 +1,5 @@
 
-import React from 'react';
+import { useCallback } from 'react';
 
 interface Category {
   name: string;
@@ -18,15 +18,15 @@ interface AnalysisData {
   categories: Category[];
 }
 
-interface AnalysisManagerProps {
+interface UseAnalysisManagerProps {
   analysis: AnalysisData | null;
   onAnalysisUpdate: (updatedAnalysis: AnalysisData) => void;
   setIsPRDAvailable: (available: boolean) => void;
 }
 
-const AnalysisManager: React.FC<AnalysisManagerProps> = ({ analysis, onAnalysisUpdate, setIsPRDAvailable }) => {
+const useAnalysisManager = ({ analysis, onAnalysisUpdate, setIsPRDAvailable }: UseAnalysisManagerProps) => {
   
-  const updateCategoriesBasedOnMessage = (message: string) => {
+  const updateCategoriesBasedOnMessage = useCallback((message: string) => {
     if (!analysis) return;
     
     const updatedCategories = [...analysis.categories];
@@ -59,9 +59,9 @@ const AnalysisManager: React.FC<AnalysisManagerProps> = ({ analysis, onAnalysisU
         setIsPRDAvailable(true);
       }
     }
-  };
+  }, [analysis, onAnalysisUpdate, setIsPRDAvailable]);
 
   return { updateCategoriesBasedOnMessage };
 };
 
-export default AnalysisManager;
+export default useAnalysisManager;
