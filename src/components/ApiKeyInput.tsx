@@ -12,6 +12,7 @@ interface ApiKeyInputProps {
 const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialValue }) => {
   const [apiKey, setApiKey] = useState<string>(initialValue || '');
   const [isSaved, setIsSaved] = useState<boolean>(!!initialValue);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (initialValue) {
@@ -26,7 +27,7 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialValue }) 
     return /^sk-[a-zA-Z0-9]{32,}$/.test(key.trim());
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!apiKey.trim()) {
@@ -48,13 +49,28 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialValue }) 
       return;
     }
     
-    onApiKeySet(apiKey);
-    setIsSaved(true);
+    setIsLoading(true);
     
-    toast({
-      title: "API Key Saved",
-      description: "Your OpenAI API key has been saved",
-    });
+    try {
+      // Optional: You could add a simple test API call here to verify the key works
+      // But we'll just save it directly for now
+      onApiKeySet(apiKey);
+      setIsSaved(true);
+      
+      toast({
+        title: "API Key Saved",
+        description: "Your OpenAI API key has been saved",
+      });
+    } catch (error) {
+      console.error("Error saving API key:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save API key",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -76,15 +92,17 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onApiKeySet, initialValue }) 
               placeholder="Enter your OpenAI API key"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
+              disabled={isLoading}
             />
           </div>
         </div>
         
         <button
           type="submit"
-          className="text-xs px-3 py-1 bg-analyst-accent text-white rounded hover:bg-blue-600 transition-colors"
+          className={`text-xs px-3 py-1 ${isLoading ? 'bg-gray-400' : 'bg-analyst-accent hover:bg-blue-600'} text-white rounded transition-colors`}
+          disabled={isLoading}
         >
-          Save
+          {isLoading ? 'Saving...' : 'Save'}
         </button>
       </form>
       <div className="text-xs text-analyst-text mt-1 opacity-75 space-y-1">

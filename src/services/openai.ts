@@ -1,3 +1,4 @@
+
 import { toast } from "@/hooks/use-toast";
 
 // Define types for OpenAI requests and responses
@@ -31,8 +32,8 @@ interface OpenAICompletionResponse {
 }
 
 export class OpenAIService {
-  // Default API key - Users should replace this with their own
-  private apiKey: string = "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";
+  // Default API key placeholder - will be replaced by user's key
+  private apiKey: string = "";
   private systemPrompt: string;
   private conversation: OpenAIMessage[] = [];
   private model: string = "gpt-4o";
@@ -68,6 +69,16 @@ export class OpenAIService {
   }
 
   public async sendMessage(userMessage: string): Promise<string> {
+    // Check if API key is set
+    if (!this.apiKey) {
+      toast({
+        title: "API Key Missing",
+        description: "Please set your OpenAI API key before sending messages",
+        variant: "destructive",
+      });
+      throw new Error("API key not set");
+    }
+
     // Add user message to conversation
     this.conversation.push({
       role: 'user',
@@ -82,6 +93,8 @@ export class OpenAIService {
         max_tokens: 1000
       };
 
+      console.log("Sending request to OpenAI API...");
+      
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -91,13 +104,51 @@ export class OpenAIService {
         body: JSON.stringify(requestBody)
       });
 
+      console.log("Received response:", response.status);
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Failed to get response from OpenAI');
+        const errorData = await response.json().catch(() => ({ error: { message: "Failed to parse error response" } }));
+        const errorMessage = errorData.error?.message || `API Error (${response.status})`;
+        
+        console.error("OpenAI API Error:", errorMessage);
+        
+        // Handle common error codes
+        let userFriendlyMessage: string;
+        switch (response.status) {
+          case 401:
+            userFriendlyMessage = "Invalid API key. Please check your OpenAI API key and try again.";
+            break;
+          case 429:
+            userFriendlyMessage = "Rate limit exceeded. Please try again later.";
+            break;
+          case 500:
+          case 502:
+          case 503:
+          case 504:
+            userFriendlyMessage = "OpenAI service is currently unavailable. Please try again later.";
+            break;
+          default:
+            userFriendlyMessage = `Error: ${errorMessage}`;
+        }
+        
+        toast({
+          title: "API Error",
+          description: userFriendlyMessage,
+          variant: "destructive",
+        });
+        
+        throw new Error(userFriendlyMessage);
       }
 
       const data: OpenAICompletionResponse = await response.json();
+      console.log("Successfully parsed OpenAI response");
+      
       const assistantMessage = data.choices[0].message.content;
+      
+      // Log token usage
+      if (data.usage) {
+        console.log(`Token usage - Prompt: ${data.usage.prompt_tokens}, Completion: ${data.usage.completion_tokens}, Total: ${data.usage.total_tokens}`);
+      }
       
       // Add assistant response to conversation history
       this.conversation.push({
@@ -108,11 +159,23 @@ export class OpenAIService {
       return assistantMessage;
     } catch (error) {
       console.error('Error calling OpenAI API:', error);
-      toast({
-        title: "API Error",
-        description: error instanceof Error ? error.message : "Failed to communicate with OpenAI",
-        variant: "destructive",
-      });
+      
+      // If this is a network error (fetch failed entirely), show a different error
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        toast({
+          title: "Network Error",
+          description: "Failed to connect to OpenAI API. Please check your internet connection.",
+          variant: "destructive",
+        });
+      } else if (error instanceof Error && !error.message.includes("API Error")) {
+        // Only show toast if we didn't already show one in the code above
+        toast({
+          title: "API Error",
+          description: error instanceof Error ? error.message : "Failed to communicate with OpenAI",
+          variant: "destructive",
+        });
+      }
+      
       throw error;
     }
   }
