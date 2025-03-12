@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { slideUpAnimation } from '@/utils/animation';
@@ -9,7 +10,7 @@ import {
   BUSINESS_ANALYST_PROMPT 
 } from '@/utils/documentGenerator';
 import { useToast } from '@/hooks/use-toast';
-import { OpenAIService } from '@/services/openai';
+import { OpenAIService, availableModels, LLMModel } from '@/services/openai';
 import ApiKeyInput from '@/components/ApiKeyInput';
 import ChatHeader from '@/components/chat/ChatHeader';
 import MessageList from '@/components/chat/MessageList';
@@ -58,8 +59,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isPRDAvailable, setIsPRDAvailable] = useState(false);
   const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const [openAIService] = useState<OpenAIService>(new OpenAIService(BUSINESS_ANALYST_PROMPT));
-  const [showPRDPreview, setShowPRDPreview] = useState(false);
-  const [prdContent, setPrdContent] = useState('');
+  const [selectedModel, setSelectedModel] = useState<LLMModel>(openAIService.getSelectedModel());
   const { toast } = useToast();
   
   // Use a ref for the PRD button to ensure consistent access across renders
@@ -135,13 +135,22 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   }, [onAnalysisComplete, openAIService, onMessagesUpdate]);
   
-  const handleApiKeySet = (apiKey: string) => {
-    openAIService.setApiKey(apiKey);
-    setShowApiKeyInput(false);
+  const handleApiKeySet = (modelId: string, apiKey: string) => {
+    openAIService.setApiKey(modelId, apiKey);
     
     toast({
       title: "API Key Updated",
-      description: "Your OpenAI API key has been saved successfully",
+      description: "Your API key has been saved successfully",
+    });
+  };
+
+  const handleModelSelect = (modelId: string) => {
+    openAIService.setSelectedModel(modelId);
+    setSelectedModel(openAIService.getSelectedModel());
+    
+    toast({
+      title: "Model Changed",
+      description: `Now using ${openAIService.getSelectedModel().name}`,
     });
   };
 
@@ -206,7 +215,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setIsTyping(true);
     
     try {
-      // Get response from OpenAI
+      // Get response from the current selected model
       const response = await openAIService.sendMessage(input);
       
       // Important: Don't hide typing indicator too soon to ensure state updates properly
@@ -350,11 +359,6 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const completedCategories = analysis?.categories.filter(cat => cat.isComplete).length || 0;
   const totalCategories = analysis?.categories.length || 12;
 
-  // Debug output for messages
-  useEffect(() => {
-    console.log("ChatInterface current messages:", JSON.stringify(messages));
-  }, [messages]);
-
   return (
     <motion.div 
       className="relative w-full h-full flex flex-col rounded-lg overflow-hidden bg-white bg-opacity-50 glass"
@@ -371,12 +375,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
         completedCategories={completedCategories}
         totalCategories={totalCategories}
         onTestPRDTrigger={handleTestPRDTrigger}
+        selectedModel={selectedModel.name}
       />
       
       {showApiKeyInput && (
         <ApiKeyInput 
-          onApiKeySet={handleApiKeySet} 
-          initialValue={openAIService.getApiKey()}
+          onApiKeySet={handleApiKeySet}
+          onModelSelect={handleModelSelect}
+          initialValues={openAIService.getAllApiKeys()}
+          selectedModel={selectedModel}
         />
       )}
       
