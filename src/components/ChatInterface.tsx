@@ -60,6 +60,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [showApiKeyInput, setShowApiKeyInput] = useState(false);
   const [openAIService] = useState<OpenAIService>(new OpenAIService(BUSINESS_ANALYST_PROMPT));
   const [selectedModel, setSelectedModel] = useState<LLMModel>(openAIService.getSelectedModel());
+  
+  // Add missing state variables for PRD preview
+  const [showPRDPreview, setShowPRDPreview] = useState(false);
+  const [prdContent, setPrdContent] = useState('');
+  
   const { toast } = useToast();
   
   // Use a ref for the PRD button to ensure consistent access across renders
